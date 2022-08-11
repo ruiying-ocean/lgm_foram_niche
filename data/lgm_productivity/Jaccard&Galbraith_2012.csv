@@ -1,0 +1,86 @@
+Site,References,Basin,Latitude,Longitude,Depth,d15N,Trace metals,Lamitions,Forams,Hol-LGM
+PO200-10-28-2,"Baas et al., 98",Atlantic,41.48833333,-9.721,2155,,,,1,1
+SO75-26KL,"Baas et al., 98",Atlantic,37.82166667,-9.503333333,1099,,,,0,0
+ODP1002,"Haug et al., 98/Peterson et al., 00/Yarincik et al., 00",Atlantic,10.70666667,-65.17,893,1,-1,-1,,-1
+PL07-39PC,"Dean, 07",Atlantic,10.7,-64.94166667,790,,-1,-1,,-1
+MD03-2621,"Meckler et al., 07",Atlantic,10.67816667,-64.9715,850,0,,-1,,-1
+11147,"Thomson et al., 90",Atlantic,29.71666667,-14.66666667,4363,,1,,,1
+SU94-20bK,"Martinez et al., 00",Atlantic,25.017,-16.392,1445,-1,1,,,1
+8534,"Thomson et al., 90",Atlantic,13.31666667,-20.66666667,4568,,1,,,1
+8539,"Thomson et al., 90",Atlantic,10.91666667,-18.46666667,4604,,1,,,1
+A180-74,"Thomson et al., 90",Atlantic,-5.00E-04,-24.16666667,3330,,1,,,1
+10549,"Thomson et al., 90",Atlantic,-6.67E-04,-16.16666667,3525,,1,,,1
+PS 2082,"Frank et al., 00",Atlantic,-43.22,11.73833333,4610,,1,,,1
+PS1754-1,"Frank et al., 00",Atlantic,-46.77,7.611666667,2470,,1,,,1
+PS 1756-5,"Frank et al., 00",Atlantic,-48.73166667,6.713333333,3787,,1,,,1
+PS 1768-8,"Frank et al., 00",Atlantic,-55.60666667,4.466666667,3270,,1,,,1
+MD04-2876,"Pichevin et al., 07",Indian,24.84283333,64.00816667,828,-1,,,,-1
+NIOP478,"Reichart et al., 02",Indian,24.21166667,65.66166667,565,,,1,,1
+SO90-137KA,"von Rad et al., 99",Indian,23.12166667,66.49666667,573,,,0,0,0
+SO90-111KL,"Schulz et al., 98/Suthhof et al., 01",Indian,23.09666667,66.48366667,775,-1,,,,-1
+SO90-119KA,"von Rad et al., 99",Indian,23.0965,66.4825,774,,,0,,0
+ME33-ST,"Suthhof et al., 01",Indian,19.999,65.68433333,3170,-1,,,,-1
+NIOP484,"Reichart et al., 02",Indian,19.49666667,58.42833333,516,,1,1,,1
+RC27-14,"Altabet et al., 02",Indian,18.25333333,57.655,596,-1,,,,-1
+RC27-23,"Altabet et al., 02",Indian,17.99333333,57.59,820,-1,,,,-1
+SO42-74KL,"Suthhof et al., 01",Indian,14.321,57.347,3212,-1,,,,-1
+NIOP 905P,"Ivanochko et al., 05",Indian,10.76666667,51.95,1586,-1,,,,-1
+NIOP455,"den Dulk et al., 98/Reichart et al., 98",Indian,23.55666667,65.95,1002,-1,1,1,1,1
+NIOP464,"Reichart et al., 98",Indian,22.25666667,63.585,1470,-1,,,,-1
+ODP723,"Altabet et al., 95",Indian,18.05166667,57.61,808,-1,,,,-1
+V34-101,"Altabet et al., 99",Indian,17.48816667,67.42333333,3038,-1,,,,-1
+RC27-61,"Altabet et al., 95",Indian,16.65833333,59.52333333,1893,-1,,,,-1
+MD76-131,"Ganeshram et al., 00",Indian,15.53,72.56833333,1230,-1,,,,-1
+GC-08,"Bakar et al., 05",Indian,15.48333333,72.85,2500,-1,,,,-1
+GeoB3004,"Schmiedl & Leuschner, 05",Indian,14.605,52.92,1803,,,,1,1
+SK-20-185,"Sarkar et al., 93",Indian,10,71.83333333,2523,,1,,,1
+SK-129/CR-05,"Pattan&Pierce, 09",Indian,9.35,71.98333333,2300,,1,,,1
+MD94-102,"Bareille et al., 98/Dezileau et al., 02",Indian,-43.5,79.8,3205,,1,,,1
+RC11-120,"Bareille et al., 98",Indian,-43.5,79.9,3193,,1,,,1
+MD88-769,"Bareille et al., 98/Dezileau et al., 02",Indian,-46.1,90.1,3420,,1,,,1
+MD94-104,"Dezileau et al., 02",Indian,-46.5,88.1,3460,,1,,,1
+MD88-772,"Bareille et al., 98",Indian,-50,104.9,3240,,1,,,1
+MD88-773,"Bareille et al., 98",Indian,-52.9,109.9,2460,,1,,,1
+MD88-773,"Francois et al., 97",Indian,-52.91666667,109.867,2460,,1,,,1
+MD84-552,"Francois et al., 97",Indian,-54.91666667,73.83333333,1780,,1,,,1
+MD84-551,"Bareille et al., 98",Indian,-55,73.3,2230,,-1,,,-1
+MD88-791,"Bareille et al., 98",Indian,-64.7,119.5,3150,,0,,,0
+ODP887,"Galbraith et al., 07/Galbraith et al., 08",Pacific,54.37,-148.45,3647,,1,,,1
+BOW-9A,"Okazaki et al., 05",Pacific,54.03716667,176.9165,2391,,,,0,0
+ODP882,"Galbraith et al., 07/Jaccard et al., 09",Pacific,50.35,167.5833333,3244,,1,,,1
+MD02-2496,"Chang et al., 08",Pacific,48.97,-127.04,1243,-1,-1,,,-1
+GH02-1030,"Ikehara et al., 06/Shibahara et al., 07",Pacific,42.2295,144.2088333,1212,,,,-1,-1
+ODP1019,"Ivanochko & Pedersen, 04/Dean, 07",Pacific,41.68271667,-124.9329833,977,-1,-1,,,-1
+MD01-2409,"Ikehara et al., 06/Shibahara et al., 07/Ishizaki et al., 09",Pacific,41.56083333,141.8778333,976,,,,-1,-1
+PC-4,"Shibahara et al., 07",Pacific,41.11666667,142.4,1363,,,,-1,-1
+F2-92-P3,"Zheng et al., 00",Pacific,35.45666667,-121.605,803,,-1,,,-1
+ODP1017,"Canriato&Kennett, 99/Ivanochko & Pedersen, 04/Hendy&Pedersen, 05",Pacific,34.53483333,-121.1071667,960,-1,-1,,-1,-1
+ODP893,"Behl & Kennett, 96/Canriato et al., 99/Emmer & Thunell, 04/Ivanochko & Pedersen, 04",Pacific,34.2875,-120.0366667,577,-1,-1,-1,-1,-1
+MD02-2503,"Hill et al., 06",Pacific,34.28,-120.04,570,,,-1,,-1
+MD02-2512,"Cheshire et al., 05",Pacific,27.945,-111.7741667,477,,,-1,,-1
+JPC-48,"Cheshire et al., 05",Pacific,27.94,-111.798,530,,,-1,,-1
+MD02-2515,"Cheshire et al., 05",Pacific,27.4835,-112.0773333,881,,,-1,,-1
+MV99 GC32/PC10,"van Geen et al., 03/Dean et al., 06",Pacific,23.78333333,-111.5666667,430,,-1,-1,,-1
+MV99 GC31/PC08,"Dean et al., 06",Pacific,23.46666667,-111.6,700,,-1,-1,,-1
+MD02-2508,"Cartapanis et al., 11",Pacific,23.465,-111.591,606,,1,-1,,0
+ME0005A 11PC,"Hendy & Pedersen, 06",Pacific,15.71,-95.29,574,0,0,1,,0
+MD02-2520,"Pichevin et al., 10",Pacific,15.669,-95.3,719,-1,,,,-1
+ME0005A 3JC,"Thunell & Kepple, 04/Hendy & Pedersen, 06",Pacific,15.65066667,-95.2805,740,0,0,-1,,0
+MD02-2524,"Pichevin et al., 10",Pacific,12.00916667,-87.91383333,863,-1,-1,,,-1
+ODP1242//ME0005-43JC,"Robinson et al., 09/Martinez & Robinson, 10",Pacific,7.855866667,-83.60696667,1364,-1,,,,-1
+TR163-19P,"Bradtmiller et al., 10/Dubois et al., 11",Pacific,2.26,-90.95,2348,-1,1,,,1
+ODP1240/ME0005-24JC,"Robinson et al., 09/Bradtmiller et al., 10/Dubois et al., 11",Pacific,0.2,-86,2921,-1,1,,,1
+ME0005-27JC,"Bradtmiller et al., 10/Dubois et al., 11",Pacific,-1.853333333,-82.78666667,2203,-1,1,,,1
+TR163-31P,"Bradtmiller et al., 10/Dubois et al., 11",Pacific,-3.618666667,-83.97066667,3209,-1,0,,,0
+ODP1235,"Muratli et al., 10",Pacific,-36.15983333,-73.56633333,489,,-1,,,-1
+ODP1234,"Robinson et al., 07/Muratli et al., 10",Pacific,-36.21916667,-73.68166667,1015,-1,-1,,,-1
+ODP1233,"Martinez et al., 06/Muratli et al., 10",Pacific,-41.00016667,-74.44983333,838,1,-1,,,-1
+Sta 3,"Shigemitsu et al., 07",Pacific,50,164.9833333,5507,,0,,,0
+KT94-15 9PC,"Crusius et al., 99",Pacific,39.57266667,139.4068333,807,,1,1,,1
+NH22P,"Ganeshram et al., 00/meroff et al., 04",Pacific,23.51833333,-106.5183333,2025,-1,0,,,0
+NH15P,"Ganeshram et al., 00/meroff et al., 04",Pacific,22.68333333,-106.48,420,-1,-1,-1,,-1
+NH8P,"Ganeshram et al., 00",Pacific,22.38833333,-107.075,1018,-1,,1,,1
+RC13-140,"Bradtmiller et al., 10",Pacific,2.87,-87.75,2246,,1,,,1
+MD97-2138,"Bradtmiller et al., 10",Pacific,-1.25,146.24,1900,,1,,,1
+RC11-238,"Bradtmiller et al., 10",Pacific,-1.52,-85.82,2573,,1,,,1
+V19-30,"Bradtmiller et al., 10",Pacific,-3.38,-83.52,3091,,1,,,1
