@@ -6,8 +6,9 @@ library(factoextra)
 ## PCA is not good, because for every site there is all four species with difference abundance
 ## another way to do is to get optimal niche (e.g., abundance > 0.8) and then do the PCA
 
-## df <- read_csv("data/modern_4pca.csv")
+#df <- read_csv("data/modern_4pca.csv")
 df <- read_csv("data/lgm_4pca.csv")
+#df <- read_csv("data/delta_4pca.csv")
 df_bn <- df[,-c(1,3,4,5)]
 df_bs <- df[,-c(1,2,4,5)]
 df_sn <- df[,-c(1,2,3,5)]
@@ -30,5 +31,9 @@ pca <- princomp(db_simp, cor = TRUE, scores = TRUE)
 groups <- as.factor(db$ecogroup)
 
 png("~/Downloads/pca_lgm.png", res=400, width = 4, height = 4, unit="in")
-print(fviz_pca_biplot(pca, col.ind = groups, label = "var"))
+print(
+  fviz_pca_biplot(pca, col.ind = groups, label = "var") +
+    xlim(c(-4.5, 4.5)) +
+    ylim(c(-4, 4))
+)
 dev.off()

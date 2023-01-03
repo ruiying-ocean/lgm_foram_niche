@@ -18,7 +18,7 @@ df_bs <- as_tibble(scale(df_sn))
 df_sn <- as_tibble(scale(df_sn))
 df_ss <- as_tibble(scale(df_ss))
 
-                                        # ladder transformation -> linear model
+## ladder transformation -> linear model
 lambda <- 0.7
 df_bn$new <-  (df_bn$dabundance^ lambda - 1) / lambda
 mod_bn  <- lm(new ~ dsst + dsal + dchl + dpo4 + dfe,
