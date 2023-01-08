@@ -3,44 +3,35 @@ library(patchwork)
 library(hrbrthemes)
 library(RColorBrewer)
 
-df <- read_csv("data/Future_temp.csv")
-df$Group <- as.factor(df$Group)
-df$pCO2 <- df$pCO2 * 1E6
-p2 <- ggplot(data=df, aes(x=Year)) + geom_line(aes(y=Temperature, group=Group, color=Group), linewidth=1.2) + ylab("Tempearature (C)") +theme_ipsum() + scale_color_ipsum() + theme(legend.position="none")
-p1 <- ggplot(data=df, aes(x=Year)) + geom_line(aes(y=pCO2, group=Group, color=Group), linewidth=1.2) + ylab("pCO2 (ppm)")  +theme_ipsum() + scale_color_ipsum()
-p <- p1 + p2 + plot_annotation(tag_levels = 'A')
-
-
 # historical graph
+# temperature and CO2 data source: https://ourworldindata.org/co2-and-other-greenhouse-gas-emissions
 past_temp <- read_csv("data/historical_global_temperature_anamoly.csv")
 past_co2 <- read_csv("data/historical_co2.csv")
+names(past_temp)[2] <- "Global_Air_Temp_Anomaly"
 
-my_colors <- brewer.pal(5, "Reds")
-my_colors <- my_colors[-1]
+# model data
+df <- read_csv("data/model_pCO2_temperature.csv")
+#df <- df %>% mutate(Age_group = as.factor(if_else(Year < 2022, "History", "Future")))
+df$Year <- df$Year + 0.5
+df$Group <- as.factor(df$Group)
 
-zip_colors <- c("1.5" = my_colors[1],
-            "2" = my_colors[2],
-            "3" = my_colors[3],
-            "4" = my_colors[4])
+# as the data, set average 1960-1990 as standard
+Average_standard <- df %>% filter(Year > 1960 & Year < 1990, Group==1.5) %>% summarise(avg_temp = mean(Temperature))
+df <- df %>% group_by(Group) %>% mutate(delta_T= Temperature - Average_standard$avg_temp) %>% ungroup()
 
-p_co2 <- ggplot(data=past_co2, aes(x=Year)) +  geom_point(aes(y=CO2_ppm), alpha=0.2)
-p_co2 + geom_segment(aes(x = 1765, y = 278, xend = 1960, yend = 316)) + 
-  geom_segment(aes(x= 1960, y = 316, xend=2022, yend=420)) +
-  geom_segment(aes(x= 2022, y = 420, xend=2100, yend=420, color="1.5")) +
-  geom_segment(aes(x= 2022, y = 420, xend=2100, yend=490, color="2")) +
-  geom_segment(aes(x= 2022, y = 420, xend=2100, yend=650, color="3")) +
-  geom_segment(aes(x= 2022, y = 420, xend=2100, yend=833, color="4")) +
-  geom_text(aes(x=Inf, y=420, label="420"), hjust=1.5, vjust=-1, size=2.5) +
-  geom_text(aes(x=Inf, y=490, label="490"), hjust=1.5, vjust=-1, size=2.5) +
-  geom_text(aes(x=Inf, y=650, label="650"), hjust=1.5, vjust=-1, size=2.5) +
-  geom_text(aes(x=Inf, y=833, label="833"), hjust=1.5, vjust=-1, size=2.5) +
-  scale_color_manual(values = zip_colors) + 
-  labs(x = "Year",
-       y = "CO2 (ppm)",
-       color = "") +  theme_ipsum() + theme(legend.position = c(0.1, 0.9))
+p_temp <- ggplot() + geom_line(data=df, aes(x=Year, y=delta_T, group=Group, color=Group), linewidth=1.2) + 
+  geom_line(data=past_temp, aes(x=Year, y=Global_Air_Temp_Anomaly)) +
+  theme_ipsum() + scale_color_ipsum() + 
+  labs(color="Temperature of 2100\n relative to 1780", x='', y="Tempearature Relative to 1960-1990 (C)") + 
+  theme(legend.position=c(0.25, 0.75))
 
-p_temp <- ggplot(data=past_temp, aes(x=Year)) +  geom_line(aes(y=Temperature_Anomaly))
+p_co2 <- ggplot() + geom_line(data=df, aes(x=Year, y=`pCO2 (ppm)`, group=Group, color=Group), linewidth=1.2) + 
+  geom_point(data=past_co2, aes(x=Year, y=CO2_ppm), size=1.5) +
+  theme_ipsum() + scale_color_ipsum()  + labs(color="Temperature of 2100\n relative to 1780", x='', y="pCO2 (ppm)") +
+  theme(legend.position=c(0.25, 0.75))
 
-#png("./output/temperature_gradient.jpg", res=300, width = 8, height = 4, unit="in")
-#print(p)
-#dev.off()
+p <- p_temp +  p_co2 + plot_annotation(tag_levels = 'A')
+
+png("./output/temperature_gradient.jpg", res=300, width = 10, height = 5, unit="in")
+print(p)
+dev.off()
