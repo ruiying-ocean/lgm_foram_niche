@@ -25,9 +25,20 @@ species_abbrev <- function(full_name, sep_string=". "){
 
 symbiosis_tbl[, short_name := mapply(species_abbrev, Species)][]
 
+
+find_sp <- function(data,symbiosis_tbl_name = 'short_name'){
+  sp_list <- data %>% pull(Species) %>% unique()
+  unincluded_sp <- sp_list[!sp_list %in% symbiosis_tbl[[symbiosis_tbl_name]]]
+  if (length(unincluded_sp) > 0){
+    return(unincluded_sp)
+  } else{
+    print("All species included!")
+  }
+}
+
 ## read and select data (remove unidentified species as well)
-glamap <- read_csv("data/lgm_foram_count_data/LGM_GLAMAP.csv")
-glamap <- glamap %>% pivot_longer(cols=c(`G. aequilateralis [%]`:`N. pachyderma d [%]`), names_to = "Species", values_to="Relative_Abundance")
+glamap <- read_csv("data/modern_data/GLAMAP_modern.csv")
+glamap <- glamap %>% pivot_longer(cols=c(`G. bulloides [%]`:`G. menardii [%]`), names_to = "Species", values_to="Relative_Abundance")
 glamap <- glamap %>%  mutate_at("Species", str_replace, " \\[%\\]", "")
 
 glamap <- glamap %>% mutate(Species=recode(Species, 
@@ -36,29 +47,26 @@ glamap <- glamap %>% mutate(Species=recode(Species,
                                            "G. ruber w" = "G. ruber",
                                            "G. ruber p" = "G. ruber",
                                            "G. ruber hsp" = "G. ruber",
+                                           "G. sacculifer wo sac" = "G. sacculifer" ,
+                                           "G. sacculifer sac" = "G. sacculifer" ,
                                            "G. quinqueloba d"= "T. quinqueloba",
                                            "G. quinqueloba" = "T. quinqueloba",
+                                           "G. bradyi" = "G. uvula",
                                            "G. quinqueloba s" =  "T. quinqueloba",
                                            "G. truncatulinoides s" = "G. truncatulinoides",
                                            "G. truncatulinoides d" = "G. truncatulinoides",                                           
-                                           "P/D int...44"="N. dutertrei",
-                                           "P/D int...26"="N. dutertrei",
                                            "G. trilobus sac" = "G. sacculifer",
                                            "G. trilobus tril" = "G. clavaticamerata",
-                                           "G. mentum" = "O. NA",
-                                           "D. grahami" = "O.NA"
 ))
 
-
-glamap_sps <- unique(glamap$Species)
-glamap_sps[!glamap_sps %in% symbiosis_tbl$short_name]
+find_sp(glamap)
 
 glamap_merged <- merge(glamap, symbiosis_tbl, by.x="Species", by.y = "short_name") %>% select(!c(Species, Species.y))
 
 # aggregate functional group abundance and divided by 100
-glamap_merged <- glamap_merged %>% group_by(Campaign, Event, Latitude, Longitude, `Date/Time`, `Depth [m]`, `Elevation [m]`,  Symbiosis, Spinose) %>% 
+glamap_merged <- glamap_merged %>% group_by(Event, Latitude, Longitude, `Depth [m]`, `Elevation [m]`,  Symbiosis, Spinose) %>% 
   summarise_all(.funs = sum, na.rm=T) %>% ungroup() %>% filter(Symbiosis != "Undetermined" & Spinose != 'Undetermined')
 glamap_merged <- glamap_merged %>% mutate(Relative_Abundance = Relative_Abundance/100)
 
-# export
-write_csv(glamap_merged, "data/lgm_foram_count_data/LGM_GLAMAP_groupped.csv")
+write_csv(glamap_merged, "data/modern_data/GLMAP_modern_groupped.csv")
+

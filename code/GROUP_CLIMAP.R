@@ -26,7 +26,7 @@ species_abbrev <- function(full_name, sep_string=". "){
 symbiosis_tbl[, short_name := mapply(species_abbrev, Species)][]
 
 ## read and calculate relative abundance
-climap <- read_csv("data/lgm_foram_count_data/CLIMAP.csv")
+climap <- read_csv("data/lgm_foram_count_data/LGM_CLIMAP.csv")
 climap <- climap %>% mutate(total = rowSums(across(`O. universa [#]`:`Foram plankt oth [#]`))) %>%
   mutate(across(`O. universa [#]`:`Foram plankt oth [#]`, ~ ./ total)) %>% select(-total)
 
@@ -76,7 +76,7 @@ find_sp <- function(data,symbiosis_tbl_name = 'short_name'){
 }
 find_sp(climap)
 
-climap_merged <- merge(climap, symbiosis_tbl, by.x="Species", by.y = "short_name") %>% select(!c(Species, Species.y)) %>% select(!`Sample comment`)
+climap_merged <- merge(climap, symbiosis_tbl, by.x="Species", by.y = "short_name") %>% select(!c(Species, Species.y))
 
 # aggregate functional group abundance and divided by 100
 climap_merged <- climap_merged %>% group_by(Latitude, Longitude, Event, `Depth [m]`, `Elevation [m]`,  Symbiosis, Spinose) %>% 
