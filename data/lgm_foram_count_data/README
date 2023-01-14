@@ -1,8 +1,19 @@
-README
-
 THIS DATA CONTAINS FORAMINIFERA COUNT DATA FROM [GLAMAP] [MARGO] [EPILOG].
 
+[BRIEF INTRODUCTION TO PROJECTS]
+
+CLIMAP (1970s, 18ka, yield a result that low-latitude have little change of SST in LGM)
+EPILOG (An update on CLIMAP, e.g., age model, 1999. Mix et al. 2001 QSR)
+GLAMAP (also ATL947, Similar to EPILOG, but just for Atlantic and different time slices)
+MARGO (Launched in 2002, includes both Modern and LGM. Kucera 2005 QSR)
+MIX (Mix et al. 1999 Palaoceanography, a subset of CLIMAP data and using different transfer function)
+
+Note: FORCENS (Pre-industrial age) includes CLIMAP, MARGO (modern subset), GLAMAP and BUFD (Brown University Foraminiferal Database)
+
 [Citation]
+
+CLIMAP Project Members (2009): Planktic foraminifera counts in surface sediment samples. PANGAEA, https://doi.org/10.1594/PANGAEA.51927
+
 Mix, Alan C; Morey, Ann E; Pisias, Nicklas G; Hostetler, Steven W (1999): Composition of planktonic foraminifera species in 1123 surface sediment samples compared with sea surface temperatures from the Levitus Atlas. PANGAEA, https://doi.org/10.1594/PANGAEA.61061
 
 Niebler, Hans-Stefan; Arz, Helge Wolfgang; Donner, Barbara; Mulitza, Stefan; Pätzold, Jürgen; Wefer, Gerold (2000): LGM, planktic foraminifera (EPILOG version). PANGAEA, https://doi.org/10.1594/PANGAEA.57027
