@@ -2,28 +2,7 @@
 library(data.table)
 library(tidyverse)
 
-## read symbiosis table
-symbiosis_tbl <- fread('~/ForamData/data/Symbiosis_table.csv')
-symbiosis_tbl[, "Name" := lapply(.SD, function(x) gsub(" ", "_", x)),
-              .SDcol="Name"] #replace white space by underscore(_)
-symbiosis_tbl <- symbiosis_tbl[, -("Remark")] #delete comment column
-symbiosis_tbl <- rbindlist(list(symbiosis_tbl, data.table(Name="Others",
-                                                          Spinose="Undetermined",
-                                                          Symbiosis="Undetermined")),
-                           use.names = TRUE)
-setnames(symbiosis_tbl, "Name", "Species")
-symbiosis_tbl$Species <- gsub("_", " ",  symbiosis_tbl$Species)
-
-## Add a abbreviation column
-species_abbrev <- function(full_name, sep_string=". "){
-  genus_name <- str_split(full_name, " ")[[1]][1]
-  sp_name <- str_split(full_name, " ")[[1]][2]
-  genus_abbrev <- str_sub(genus_name, 1, 1)
-  combine_name <- paste(genus_abbrev, sp_name, sep = sep_string)
-  return (combine_name)
-}
-
-symbiosis_tbl[, short_name := mapply(species_abbrev, Species)][]
+source("code/data_clean/read_symbiosis_table.R")
 
 ## read and select data (remove unidentified species as well)
 epilog <- read_csv("data/lgm_foram_count_data/LGM_EPILOG.csv") %>% select(-`Foram plankt [#]`)
@@ -32,8 +11,6 @@ epilog <- epilog %>%  mutate_at("Species", str_replace, " \\[%\\]", "")
 
 ## Rename species to match symbiosis table
 ### Get the different names
-#epilog_sps <- unique(epilog$Species)
-#epilog_sps[!epilog_sps %in% symbiosis_tbl$short_name]
 
 epilog <- epilog %>% mutate(Species=recode(Species, 
                                  "N. pachyderma d" =  "N. pachyderma",
@@ -56,7 +33,12 @@ epilog_merged <- merge(epilog, symbiosis_tbl, by.x="Species", by.y = "short_name
 
 # aggregate functional group abundance and divided by 100
 epilog_merged <- epilog_merged %>% group_by(Latitude, Longitude, Event, `Depth [m]`, `Elevation [m]`,  Symbiosis, Spinose) %>% 
-  summarise_all(.funs = sum, na.rm=T) %>% ungroup() %>% filter(Symbiosis != "Undetermined" & Spinose != 'Undetermined')
+    summarise_all(.funs = sum, na.rm=T) %>% ungroup() %>% filter(Symbiosis != "Undetermined" & Spinose != 'Undetermined')
+
+# average through different depths
+epilog_merged <- epilog_merged %>% group_by(Latitude, Longitude, Event, `Elevation [m]`,  Symbiosis, Spinose) %>% 
+  summarise_all(.funs = mean, na.rm=T) %>% ungroup()
+
 epilog_merged <- epilog_merged %>% mutate(Relative_Abundance = Relative_Abundance/100)
 
 # export

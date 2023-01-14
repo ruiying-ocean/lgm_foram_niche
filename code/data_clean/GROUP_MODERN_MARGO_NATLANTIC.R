@@ -3,33 +3,12 @@ library(data.table)
 library(tidyverse)
 
 ## read symbiosis table
-symbiosis_tbl <- fread('~/ForamData/data/Symbiosis_table.csv')
-symbiosis_tbl[, "Name" := lapply(.SD, function(x) gsub(" ", "_", x)),
-              .SDcol="Name"] #replace white space by underscore(_)
-symbiosis_tbl <- symbiosis_tbl[, -("Remark")] #delete comment column
-symbiosis_tbl <- rbindlist(list(symbiosis_tbl, data.table(Name="Others",
-                                                          Spinose="Undetermined",
-                                                          Symbiosis="Undetermined")),
-                           use.names = TRUE)
-setnames(symbiosis_tbl, "Name", "Species")
-symbiosis_tbl$Species <- gsub("_", " ",  symbiosis_tbl$Species)
-
+source("code/data_clean/read_symbiosis_table.R")
 
 north_atlantic <- read_csv("~/Desktop/margo_modern_NorthAtlantic.csv") %>% filter(`%(1) or Raw(2)` == 1)
 
 north_atlantic <- north_atlantic %>% pivot_longer(cols=c(`Orbulina universa`:`Globigerinita uvula`), names_to = "Species", values_to="Relative_Abundance") %>%
   select(!c(`Coring device`, `Other ID`, `Other UnID`, `%(1) or Raw(2)`))
-
-
-find_sp <- function(data,symbiosis_tbl_name = 'short_name'){
-  sp_list <- data %>% pull(Species) %>% unique()
-  unincluded_sp <- sp_list[!sp_list %in% symbiosis_tbl[[symbiosis_tbl_name]]]
-  if (length(unincluded_sp) > 0){
-    return(unincluded_sp)
-  } else{
-    print("All species included!")
-  }
-}
 
 
 north_atlantic <- north_atlantic %>% mutate(Species=recode(Species, 

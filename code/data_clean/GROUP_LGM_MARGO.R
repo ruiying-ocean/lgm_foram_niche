@@ -2,16 +2,7 @@ library(data.table)
 library(dplyr)
 
 ## read symbiosis table
-symbiosis_tbl <- fread('data/Symbiosis_table.csv')
-symbiosis_tbl[, "Name" := lapply(.SD, function(x) gsub(" ", "_", x)),
-       .SDcol="Name"] #replace white space by underscore(_)
-symbiosis_tbl <- symbiosis_tbl[, -("Remark")] #delete comment column
-symbiosis_tbl <- rbindlist(list(symbiosis_tbl, data.table(Name="Others",
-                                                          Spinose="Undetermined",
-                                                          Symbiosis="Undetermined")),
-                           use.names = TRUE)
-setnames(symbiosis_tbl, "Name", "Species")
-symbiosis_tbl$Species <- gsub("_", " ",  symbiosis_tbl$Species)
+source("code/data_clean/read_symbiosis_table.R")
 
 ## read and select data (remove unidentified species as well)
 north_atlantic <- fread("data/MARGO/MARGO_NorthAtlantic.csv")
