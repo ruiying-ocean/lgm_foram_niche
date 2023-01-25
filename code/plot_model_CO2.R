@@ -5,18 +5,18 @@ library(RColorBrewer)
 
 # historical graph
 # temperature and CO2 data source: https://ourworldindata.org/co2-and-other-greenhouse-gas-emissions
-past_temp <- read_csv("data/historical_global_temperature_anamoly.csv")
-past_co2 <- read_csv("data/historical_co2.csv")
+past_temp <- read_csv("data/model_data/observed_global_temperature_anamoly.csv")
+past_co2 <- read_csv("data/model_data/observed_co2.csv")
 names(past_temp)[2] <- "Global_Air_Temp_Anomaly"
 
 # model data
-df <- read_csv("data/model_pCO2_temperature.csv")
+df <- read_csv("data/model_data/model_pCO2_temperature.csv")
 #df <- df %>% mutate(Age_group = as.factor(if_else(Year < 2022, "History", "Future")))
-df$Year <- df$Year + 0.5
+df$Year <- df$Year - 0.5
 df$Group <- as.factor(df$Group)
 
 # as the data, set average 1960-1990 as standard
-Average_standard <- df %>% filter(Year > 1960 & Year < 1990, Group==1.5) %>% summarise(avg_temp = mean(Temperature))
+Average_standard <- df %>% filter(Year > 1960 & Year < 1990, Group=='PI') %>% summarise(avg_temp = mean(Temperature))
 df <- df %>% group_by(Group) %>% mutate(delta_T= Temperature - Average_standard$avg_temp) %>% ungroup()
 
 p_temp <- ggplot() + geom_line(data=df, aes(x=Year, y=delta_T, group=Group, color=Group), linewidth=1.2) + 
