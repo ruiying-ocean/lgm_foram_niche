@@ -12,7 +12,7 @@ df_future <- read_csv("data/future4_4pca.csv") %>% select(-1) %>% mutate(age  = 
 db <- rbind(df_modern, df_lgm, df_future) %>% pivot_longer(cols=bn:ss, names_to = "foram", values_to="biomass")
 remove("df_modern", "df_lgm", "df_future")
 
-db <- db %>% mutate(biomass=log(biomass)) %>% filter(biomass>-6)
+db <- db %>% mutate(biomass=log(biomass)) %>% filter(biomass>-9)
 
 p1 <- db %>% ggplot(aes(x=sst, y=biomass, color=age,fill=age, group=age)) +
   geom_point(alpha=0.3)+
