@@ -24,7 +24,7 @@ foram_names <- c(
 
 p1 <- db %>% ggplot(aes(x=sst, y=biomass, color=age,fill=age, group=age)) +
   geom_point(alpha=0.3)+
-  geom_smooth(method="gam", se=T, fullrange=F) +
+  geom_smooth(method="loess",se=T, fullrange=F) +
   facet_wrap(~foram,  strip.position = "bottom", labeller = as_labeller(foram_names)) +
   xlab("SST (°C)")+ 
   ylab(expression(Log[10]~"biomass ("*Log[10]~"mmol C"~m^-3*")"))+ 
@@ -36,7 +36,7 @@ p1 <- db %>% ggplot(aes(x=sst, y=biomass, color=age,fill=age, group=age)) +
 
 p2 <- db %>% ggplot(aes(x=prey, y=biomass, color=age,fill=age, group=age)) +
   geom_point(alpha=0.3)+
-  geom_smooth(method="gam", se=T, fullrange=F) +
+  geom_smooth(method="loess",se=T, fullrange=F) +
   facet_wrap(~foram,  strip.position = "bottom", labeller = as_labeller(foram_names)) +
   xlab(expression("Preferred prey biomass (mmol C"~m^-3*")"))+ 
   ylab(expression(Log[10]~"biomass ("*Log[10]~"mmol C"~m^-3*")"))+ 
@@ -49,6 +49,6 @@ p2 <- db %>% ggplot(aes(x=prey, y=biomass, color=age,fill=age, group=age)) +
 p1 <- tag_facet(p1)
 p2 <- tag_facet(p2)
 
-ggsave("output/thermal_niche.jpg", p1, dpi=300)
-ggsave("output/food_niche.jpg", p2, dpi=300)
+ggsave("output/realised_thermal_niche.jpg", p1, dpi=300)
+ggsave("output/realised_food_niche.jpg", p2, dpi=300)
 
