@@ -93,54 +93,57 @@ plot_niche_overlap <- function(pca, age1, age2, foram_sp,
 
 pdf("output/niche_overlap.pdf",  width=8, height=10)
 par(mfrow = c(4, 2))
+lgm_color <- "#008EA0FF"
+modern_color <- "pink"
+future_color <- "red3"  
 
 plot_niche_overlap(pca.env, "LGM", "modern", 
                    foram_sp="bn",
                    title = "symbiont-barren non-spinose",
-                   col1="#008EA0FF", col2="orange",
-                   tag="a", col3="brown")
+                   col1=lgm_color, col2=modern_color,
+                   tag="a", col3="purple")
 
 plot_niche_overlap(pca.env, "modern", "future", 
                    foram_sp="bn",
                    title = "symbiont-barren non-spinose",
-                   col1="orange", col2="#C71000FF",
-                   tag="b", col3="red")
+                   col1=modern_color, col2=future_color,
+                   tag="b", col3="red1")
 
 plot_niche_overlap(pca.env, "LGM", "modern", 
                    foram_sp="bs",
                    title =  "symbiont-barren spinose",
-                   col1="#008EA0FF", col2="orange",
-                   tag="c", col3="brown")
+                   col1=lgm_color, col2=modern_color,
+                   tag="c", col3="purple")
 
 plot_niche_overlap(pca.env, "modern", "future", 
                    foram_sp="bs",
                    title = "symbiont-barren spinose",
-                   col1="orange", col2="#C71000FF",
-                   tag="d", col3="red")
+                   col1=modern_color, col2=future_color,
+                   tag="d", col3="red1")
 
 plot_niche_overlap(pca.env, "LGM", "modern", 
                    foram_sp="sn",
                    title =  "symbiont-barren non-spinose",
-                   col1="#008EA0FF", col2="orange",
-                   tag="e", col3="brown")
+                   col1=lgm_color, col2=modern_color,
+                   tag="e", col3="purple")
 
 plot_niche_overlap(pca.env, "modern", "future", 
                    foram_sp="sn",
                    title = "symbiont-barren non-spinose",
-                   col1="orange", col2="#C71000FF",
-                   tag="f", col3="red")
+                   col1=modern_color, col2=future_color,
+                   tag="f", col3="red1")
 
 plot_niche_overlap(pca.env, "LGM", "modern", 
                    foram_sp="ss",
                    title =  "symbiont-barren spinose",
-                   col1="#008EA0FF", col2="orange",
-                   tag="g", col3="brown")
+                   col1=lgm_color, col2=modern_color,
+                   tag="g", col3="purple")
 
 plot_niche_overlap(pca.env, "modern", "future", 
                    foram_sp="ss",
                    title = "symbiont-barren spinose",
-                   col1="orange", col2="#C71000FF",
-                   tag="h", col3="red")
+                   col1=modern_color, col2=future_color,
+                   tag="h", col3="red1")
 
 dev.off ()
 
