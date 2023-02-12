@@ -18,7 +18,8 @@ print(pca.env$rotation)
 # plot loading
 # library(explor)
 # explor(pca.env)
-
+loading_plot <- factoextra::fviz_pca_var(pca.env)
+ggsave("output/PCA_loading.png",loading_plot, dpi=400)
 
 plot_niche_overlap <- function(pca, age1, age2, foram_sp,
                                title="", 
@@ -84,6 +85,7 @@ plot_niche_overlap <- function(pca, age1, age2, foram_sp,
   ## Schoener's D index
   overlap <- ecospat.niche.overlap(grid.clim.age1, grid.clim.age2, cor = F)$D
   overlap <- round(overlap, 2)
+  print(overlap)
   overlap_label <- paste0("Niche overlap: ", overlap)
   
   text(-13.5, 4, tag, font=2, cex=1.7)
@@ -91,59 +93,72 @@ plot_niche_overlap <- function(pca, age1, age2, foram_sp,
   legend(x = "bottomright", legend=c(age1, age2, "overlap"), lty = c(1, 1, 1), col = c(col1, col2, col3))
 }
 
-pdf("output/niche_overlap.pdf",  width=8, height=10)
+pdf("output/optimal_niche_overlap.pdf",width=8, height=10)
+  
+min_biomass=1E-4
+
 par(mfrow = c(4, 2))
 lgm_color <- "#008EA0FF"
-modern_color <- "pink"
+modern_color <- "orange"
 future_color <- "red3"  
+overlap_lgm_modern <- "brown"
+overlap_modern_future <- "red1"
 
 plot_niche_overlap(pca.env, "LGM", "modern", 
                    foram_sp="bn",
                    title = "symbiont-barren non-spinose",
+                    foram_threshold = min_biomass,
                    col1=lgm_color, col2=modern_color,
-                   tag="a", col3="purple")
+                   tag="a", col3=overlap_lgm_modern)
 
 plot_niche_overlap(pca.env, "modern", "future", 
                    foram_sp="bn",
                    title = "symbiont-barren non-spinose",
                    col1=modern_color, col2=future_color,
-                   tag="b", col3="red1")
+                   foram_threshold = min_biomass,
+                   tag="b", col3=overlap_modern_future)
 
 plot_niche_overlap(pca.env, "LGM", "modern", 
                    foram_sp="bs",
                    title =  "symbiont-barren spinose",
+                   foram_threshold = min_biomass,
                    col1=lgm_color, col2=modern_color,
-                   tag="c", col3="purple")
+                   tag="c", col3=overlap_lgm_modern)
 
 plot_niche_overlap(pca.env, "modern", "future", 
                    foram_sp="bs",
                    title = "symbiont-barren spinose",
+                   foram_threshold = min_biomass,
                    col1=modern_color, col2=future_color,
-                   tag="d", col3="red1")
+                   tag="d", col3=overlap_modern_future)
 
 plot_niche_overlap(pca.env, "LGM", "modern", 
                    foram_sp="sn",
                    title =  "symbiont-barren non-spinose",
+                   foram_threshold = min_biomass,
                    col1=lgm_color, col2=modern_color,
-                   tag="e", col3="purple")
+                   tag="e", col3=overlap_lgm_modern)
 
 plot_niche_overlap(pca.env, "modern", "future", 
                    foram_sp="sn",
                    title = "symbiont-barren non-spinose",
+                   foram_threshold = min_biomass,
                    col1=modern_color, col2=future_color,
-                   tag="f", col3="red1")
+                   tag="f", col3=overlap_modern_future)
 
 plot_niche_overlap(pca.env, "LGM", "modern", 
                    foram_sp="ss",
                    title =  "symbiont-barren spinose",
+                   foram_threshold = min_biomass,
                    col1=lgm_color, col2=modern_color,
-                   tag="g", col3="purple")
+                   tag="g", col3=overlap_lgm_modern)
 
 plot_niche_overlap(pca.env, "modern", "future", 
                    foram_sp="ss",
                    title = "symbiont-barren spinose",
+                   foram_threshold = min_biomass,
                    col1=modern_color, col2=future_color,
-                   tag="h", col3="red1")
+                   tag="h", col3=overlap_modern_future)
 
 dev.off ()
 
