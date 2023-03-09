@@ -100,36 +100,67 @@ get_breaks <- function(v,n){
 plot_niche <- function(n, quantile,variable){
   var = all_niche %>% pull(variable)
   b = get_breaks(var,n=n)#break point
-  l <- rollmean(b,2) #midpoint of interval
+  l <- rollmean(b, n/15) #rolling for almost half degree
   bin_df <- data.frame(l) %>% rowid_to_column("bin_id")
   tmp <- all_niche %>% mutate(bin_id = cut(all_niche[[variable]], breaks=b, labels=F)) %>%
     left_join(bin_df)
   
   # get highest values
   tmp <-  tmp %>% group_by(Species, age, bin_id) %>%
-    summarise(Count, l, cutoff = quantile(Count, quantile, na.rm=T)) %>%
+    reframe(Count, l, cutoff = quantile(Count, quantile, na.rm=T)) %>%
     filter(Count > cutoff)
   
+  # calculate Tmin, Tmax
+  tolerance_range <<- tmp %>% filter(Count > 1) %>%
+    group_by(Species, age) %>%
+    mutate(ct_min = round(min(l, na.rm = T), 1),
+           ct_max =  round(max(l,na.rm = T), 1)) %>%
+    ungroup()
+  
+  # calculate dynamic y position for segment
+  tolerance_range <<- tolerance_range %>%
+    group_by(Species) %>%
+    mutate(y = max(Count, na.rm = T)*-0.01) %>%
+    mutate(y = case_when(
+      age=="lgm"~y,
+      age=="pi"~2*y
+    )) %>% 
+    reframe(Species=Species, age=age,ct_min=ct_min,  ct_max=ct_max, y=y) %>%
+    distinct()
+
   p <- tmp %>% ggplot(aes(x=l, y=Count, group=age)) + 
-    stat_summary(fun=mean, geom="line", aes(color=age),alpha=0.25)+
-    geom_smooth(aes(color=age),se=F)+
+    stat_summary(fun=mean, geom="point", aes(color=age),alpha=0.15)+
+    geom_smooth(aes(color=age, fill=age),se=F, alpha=0.2,
+                method = "gam", formula = y ~ s(x, bs = "cs"))+
     facet_wrap(~Species, scales = "free_y")+
-    scale_color_manual(values=c("#008EA0FF", "#C71000FF"),
-                       labels=c("LGM","Modern"))
+    scale_color_manual(values=c("#0072B5FF", "#E18727FF"),
+                       labels=c("LGM","Modern"))+
+  scale_fill_manual(values=c("#0072B5FF", "#E18727FF"),
+                     labels=c("LGM","Modern"))
+  
+  p <- p + geom_segment(aes(x = ct_min, 
+                            y = y,
+                            xend = ct_max,
+                            yend = y, colour = age),
+                        size = 1.5, 
+                        linetype=1,
+                        data = tolerance_range)
   return(p)
 }
 
-plot_niche(n=60, quantile=0.85, "SST") + xlab("Sea Surface Temperature (°C)") + 
+plot_niche(n=90, quantile=0,  "SST") + xlab("Sea Surface Temperature (°C)") + 
   ylab("Abundance (#)")+
   theme_bw()+
   theme(text=element_text(family="Fira Sans"), strip.text = element_text(face="italic"))
-ggsave("output/Niche_SST_adaptation.png", dpi=300)
 
-plot_niche(n=120,  quantile=0.8,"SSS")+ xlab("Sea Suraface Salinity (PSU)") +
+ggsave("output/Niche_SST_adaptation.png", dpi=300, width = 12, height=7.15)
+
+plot_niche(n=90,  quantile=0, "SSS")+ xlab("Sea Suraface Salinity (PSU)") +
   ylab("Abundance (#)")+
   theme_bw()+
   theme(text=element_text(family="Fira Sans"), strip.text = element_text(face="italic"))
-ggsave("output/Niche_SSS_adaptation.png", dpi=300)
+
+ggsave("output/Niche_SSS_adaptation.png", dpi=300, width = 12, height=7.15)
 
 
 
