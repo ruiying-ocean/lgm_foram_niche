@@ -1,10 +1,25 @@
 library(tidyverse)
 
+## 1. abundance and temperature data
+
+## -------- Taxonomy ------------
+## G. sacculifer with or without sac-like final chamber are merged
+## Pachederma/Dutertrei integrade is not considered
+## G. menardii is considered as G. cultrata
+## G. Tumida, G. menardii flexuosa are merged as G. flexuosa
+## G. ruber (w) and G. ruber (p) are separated to G. ruber albus (white in latin) and G. ruber ruber (reddish in latin)
+
 select_species <- c("Orbulina universa", "Globigerina bulloides", "Neogloboquadrina pachyderma",
   "Neogloboquadrina dutertrei", "Neogloboquadrina incompta", "Globorotalia inflata", "Globigerinita glutinata",
   "Globigerinoides ruber w", "Globigerinoides ruber p", "Globorotalia menardii" ,
   "Turborotalita quinqueloba","Trilobatus sacculifer"
   )
+
+## T. quinqueloba upper-thermocline or mixed-layer habitat
+## T. sacculifer  Open ocean mixed-layer tropical/subtropical
+## G. menardii Open ocean thermocline
+## G. glutinata  shallow, mixed-layer habitat
+## G. inflata Open ocean thermocline.
 
 lgm_climap <- read_csv("data/lgm_foram/raw/LGM_CLIMAP_wsst.csv")
 lgm_atlantic <- read_csv("data/lgm_foram/raw/LGM_MARGO/LGM_MARGO_SouthAtlantic_count_wsst.csv")
@@ -13,7 +28,7 @@ lgm_pacific <- read_csv("data/lgm_foram/raw/LGM_MARGO/LGM_MARGO_pacific_count_ws
 names(lgm_climap) <- gsub(" [#]", "", names(lgm_climap), fixed=T)
 names(lgm_climap) <- gsub(" [m]", "", names(lgm_climap), fixed=T)
 
-#`G. truncatulinoides` is strangly high          
+#`G. truncatulinoides` is strangely high          
 lgm_climap <- lgm_climap %>%
   select(SST,SSS,`O. universa`, `G. bulloides`,`G. inflata`,`G. quinqueloba`,
          `N. dutertrei`, `G. ruber w`, `G. ruber p`,
@@ -40,7 +55,7 @@ lgm_pacific <- lgm_pacific %>%
          `Globigerinita glutinata` = `Globigerinita glutinata`,) %>%
   select(SST,SSS, any_of(select_species))
 
-### ruber pink and white!
+### G ruber pink and white!
 species_abbrev <- function(full_name, split_str = " ", sep_string=". "){
   splited_string <- str_split(full_name, split_str)[[1]]
   
@@ -87,6 +102,7 @@ pi_niche <- pi_niche %>%
 pi_niche$age = "pi"
 #source("code/lombard_2009_model.R")
 
+## Modern sediment trap data
 modern_niche <- read_csv("data/Jonkers_2019/shell_flux_data_wsst.csv")
 names(modern_niche)[20:60] <- sapply(names(modern_niche)[20:60], species_abbrev,  split_str="_")
 modern_niche$SSS <- NA
@@ -106,4 +122,21 @@ modern_niche <- modern_niche %>% pivot_longer(cols=`O. universa`:`T. sacculifer`
 modern_niche <- modern_niche %>% rename(Count=Flux) %>% drop_na(SST)
 modern_niche$age = "modern"
 modern_niche %>% mutate(Count=Count/1000)
-all_niche <- rbind(pi_niche,lgm_niche) %>% drop_na(SST)
+niche_data <- rbind(pi_niche,lgm_niche) %>% drop_na(SST)
+niche_data <- niche_data %>% rename(sst=SST, sss=SSS, count=Count, species=Species)
+
+remove(lgm_atlantic)
+remove(lgm_climap)
+remove(lgm_niche)
+remove(lgm_pacific)
+remove(modern_niche)
+remove(pi_niche)
+remove(pi)
+
+## 2. biomass and temperature model output
+
+model_modern <- read_csv("data/modern_4pca.csv") %>% select(-1) %>% mutate(age  = "modern")
+model_lgm <- read_csv("data/lgm_4pca.csv") %>% select(-1)  %>% mutate(age  = "LGM")
+niche_genie <- rbind(model_modern, model_lgm) %>% pivot_longer(cols=bn:ss, names_to = "species", values_to="biomass")
+remove(model_modern)
+remove(model_lgm)
