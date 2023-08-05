@@ -1,4 +1,4 @@
-#source("thermal_niche_data")
+source("code/thermal_niche_data.R")
 ### Plot !
 
 # Set the global theme for text properties
@@ -11,8 +11,8 @@ theme_set(
     )
 )
 
-c_cold <- '#3182BD'
-c_warm <- '#B31312'
+c_cold <- "#0C4876"
+c_warm <- "#98bad5"
 
 ###### Fig 1
 ## raw data
@@ -85,11 +85,16 @@ figs3 <- figs3+ geom_label_repel(data = thermal_opt(obs_sp_smooth),
                 nudge_y = 30, label.r = 0.05, label.size=0.1)+
   scale_fill_manual(values=c(c_cold,c_warm))
 
+figs3+ geom_label(data = thermal_opt(obs_sp_smooth),
+                        aes(x = model_x, y=model_y, fill = age, label=round(model_x)),
+                  position=position_jitter(width=4,height=100))+
+  scale_fill_manual(values=c(c_cold,c_warm))
+
 figs3%>%ggsave(file = "output/figs3.jpg", dpi = 400, width = 12, height = 8)
 
 ### Fig2
 ## the same color as the python script
-color_palette <- c("#3182BD", "#808080", '#420a68', '#932667', '#dd513a', '#fca50a')
+color_palette <- c(c_cold, c_warm, '#420a68', '#932667', '#dd513a', '#fca50a')
 
 genie_fg_smooth$age <- factor(genie_fg_smooth$age, levels = c("lgm","pi","historical","future1p5","future2","future3","future4"))
 fig2b <- genie_fg_smooth %>% filter(age!="historical")%>%
@@ -111,12 +116,13 @@ fig2b <- fig2b+
 
 ggsave("output/fig2b.jpg", width=9, height=2.5, dpi=300)
 
-
 ## as fig1 but plot chl
-figs5 <- ggplot() + geom_point(data=genie_fg_raw %>% filter(age=="lgm" | age=="pi"), aes(x=chl_total, y =abundance_michaels, color=age), size=1, alpha=0.2)
-figs5 <- figs5 + geom_line(data=genie_fg_smooth_chl %>% filter(age=="lgm" | age=="pi"), aes(x=model_x, y =model_y, color=age),  linewidth=1)
+figs5 <- ggplot() + geom_line(data=genie_fg_smooth_chl%>% filter(age!="historical"), aes(x=model_x, y =model_y, color=age),  linewidth=1)
 figs5 <- figs5 + facet_wrap(~species, scale="free_y",nrow=1)
-figs5 <- figs5  + scale_color_manual(values=c(c_cold,c_warm), labels=c("LGM","Pre-industrial")) +
-  labs(x=expression("Total Chlorophyll (" * "mg/m"^3 * ")"),
+figs5 <- figs5  + 
+  scale_color_manual(values = color_palette, 
+                     labels = c("Last Glacial Maximum", "Pre-industrial", "2100 (+1.5°C)", "2100 (+2°C)", "2100 (+3°C)", "2100 (+4°C)"))+
+    labs(x=expression("Total Chlorophyll (" * "mg/m"^3 * ")"),
        y = expression("Abundance (" * "#/m"^3 * ")"))
-ggsave("output/figs5.jpg", width=9, height=2.5, dpi=300)
+figs5 <- figs5 +  theme(legend.position = "bottom")
+ggsave("output/figs5.jpg",figs5, width=8, height=4, dpi=300)

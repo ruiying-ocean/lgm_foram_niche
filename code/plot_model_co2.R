@@ -49,11 +49,11 @@ cmip_co2  <- function(dir, origin_day="0000-01-01"){
    
    return(data.frame(date=ymd, carbon_dioxide_concentration = global_co2))
 }
-ssp_co2_hist <- cmip_co2("~/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_CMIP_UoM-CMIP-1-2-0_gr1-GMNHSH_0000-2014.nc")
-ssp_co2_ssp126 <- cmip_co2("~/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-IMAGE-ssp126-1-2-1_gr1-GMNHSH_2015-2500.nc", "1850-01-01 00:00:00")
-ssp_co2_ssp245 <- cmip_co2("~/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-MESSAGE-GLOBIOM-ssp245-1-2-1_gr1-GMNHSH_2015-2500.nc",  "1850-01-01 00:00:00")
-ssp_co2_ssp370 <- cmip_co2("~/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-AIM-ssp370-1-2-1_gr1-GMNHSH_2015-2500.nc",  "1850-01-01 00:00:00")
-ssp_co2_ssp585 <- cmip_co2("~/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-REMIND-MAGPIE-ssp585-1-2-1_gr1-GMNHSH_2015-2500.nc",  "1850-01-01 00:00:00")
+ssp_co2_hist <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_CMIP_UoM-CMIP-1-2-0_gr1-GMNHSH_0000-2014.nc")
+ssp_co2_ssp126 <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-IMAGE-ssp126-1-2-1_gr1-GMNHSH_2015-2500.nc", "1850-01-01 00:00:00")
+ssp_co2_ssp245 <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-MESSAGE-GLOBIOM-ssp245-1-2-1_gr1-GMNHSH_2015-2500.nc",  "1850-01-01 00:00:00")
+ssp_co2_ssp370 <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-AIM-ssp370-1-2-1_gr1-GMNHSH_2015-2500.nc",  "1850-01-01 00:00:00")
+ssp_co2_ssp585 <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-REMIND-MAGPIE-ssp585-1-2-1_gr1-GMNHSH_2015-2500.nc",  "1850-01-01 00:00:00")
 
 ssp_co2_hist <- ssp_co2_hist %>% mutate(label = 'historical')
 ssp_co2_ssp126 <- ssp_co2_ssp126 %>% mutate(label='ssp126')
@@ -66,11 +66,11 @@ ssp_co2_data <- ssp_co2_data %>% filter(as.POSIXlt(date)$year + 1900 <= 2100, da
 ssp_co2_data <- ssp_co2_data %>% as_tibble()
 ## ---------- CMIP6 TEMP data -------------------
 
-ts_hist <- read_csv("~/cmip_ts/ts_historical.csv")
-ts_ssp126 <- read_csv("~/cmip_ts/ts_ssp126.csv")
-ts_ssp245 <- read_csv("~/cmip_ts/ts_ssp245.csv")
-ts_ssp370 <- read_csv("~/cmip_ts/ts_ssp370.csv")
-ts_ssp585 <- read_csv("~/cmip_ts/ts_ssp585.csv")
+ts_hist <- read_csv("~/Science/cmip_ts/ts_historical.csv")
+ts_ssp126 <- read_csv("~/Science/cmip_ts/ts_ssp126.csv")
+ts_ssp245 <- read_csv("~/Science/cmip_ts/ts_ssp245.csv")
+ts_ssp370 <- read_csv("~/Science/cmip_ts/ts_ssp370.csv")
+ts_ssp585 <- read_csv("~/Science/cmip_ts/ts_ssp585.csv")
 
 ## Combine all dataframes
 cmip_ts <- rbind(ts_hist, ts_ssp126, ts_ssp245, ts_ssp370, ts_ssp585)
@@ -106,7 +106,7 @@ theme_set(
     theme(
         text = element_text( family = "Roboto", size = 13), 
         panel.grid.major.x = element_blank(),
-        panel.grid.major.y = element_line(linetype = "dashed", color="gray50", size = 0.5),
+        panel.grid.major.y = element_line(linetype = "dashed", color="gray50", linewidth = 0.5),
         panel.grid.minor = element_blank(),
         panel.background = element_rect(),
         legend.position="bottom",
@@ -118,13 +118,13 @@ p1 <- ggplot() +
    geom_line(data = model_pco2_temp, aes(x = Year, y = `pCO2 (ppm)`, group = Group, color = Group), linewidth = 1) +
    geom_point(data = hist_co2, aes(x = Year, y = CO2_ppm), size = 2, alpha = 0.5) +
    labs(color="", x='', y="",
-        title = "Global CO2 concentration (ppm)")
+        title = expression("Global "~CO[2]~" concentration (ppm)"))
 
 ## GENIE CO2 concentration
 p2 <- ssp_co2_data %>% ggplot(aes(x=date, y=carbon_dioxide_concentration)) + geom_line(aes(color=label), linewidth=1)
 
 p2<-p2+labs(color="", x='', y="",
-     title = "Global CO2 concentration (ppm)")
+            title = expression("Global "~CO[2]~" concentration (ppm)"))
 
 ## GENIE temperature relative to 1960-1990 average
 
@@ -167,7 +167,7 @@ p1 <- p1 + theme(legend.position = "none")
 p2 <- p2 + theme(legend.position = "none")
 
 ## arrange the plots
-p <- ggarrange(p1, p2, p3, p4, ncol = 2, nrow = 2,
+p <- ggpubr::ggarrange(p1, p2, p3, p4, ncol = 2, nrow = 2,
                labels = c("(a)", "(b)", "(c)", "(d)"),heights = c(4, 5),
                label.x =  0.12, label.y = 0.85)
 

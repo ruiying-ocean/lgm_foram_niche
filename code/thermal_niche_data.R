@@ -149,9 +149,6 @@ sp_list <- sp_list[!sp_list %in% c("T. humilis", "T. iota", "H. digitata",
                                    "G. uvula", "G. theyeri", "B. pumilio",
                                    "C. nitida", "D. anfracta", "H. pelagica")]
 
-sp_list <- c("")
-
-
 subset_columns <- c("SST", "species", "Abundance", "age")
 obs_sp_raw <- rbind(pi_sp[subset_columns], lgm_sp[subset_columns])
 obs_sp_raw <- obs_sp_raw %>% filter(species %in% sp_list)
@@ -174,6 +171,7 @@ genie_fg_raw <- load_models("data/model_drived/") %>%
 obs_fg_a_smooth <- loop_smooth(obs_fg_a_raw, i = species, j = age, x=sst, y=abundance, quant_level=global_quantlvl)
 genie_fg_smooth <- loop_smooth(genie_fg_raw, i = species, j = age, x=sst, y=abundance_michaels, quant_level=global_quantlvl)
 genie_fg_smooth_chl <- loop_smooth(genie_fg_raw, i = species, j = age, x=chl_total, y=abundance_michaels, quant_level=global_quantlvl)
+genie_fg_smooth_light <- loop_smooth(genie_fg_raw, i = species, j = age, x=light, y=abundance_michaels, quant_level=global_quantlvl)
 obs_sp_smooth <- loop_smooth(obs_sp_raw, i = species, j = age, x=SST, y=Abundance, quant_level=global_quantlvl)
 
 ### -----------------------
@@ -187,11 +185,11 @@ obs_sp_smooth <- loop_smooth(obs_sp_raw, i = species, j = age, x=SST, y=Abundanc
 ## ------------------------
 ## trait does not explain the difference
 
-sp_analaysis <- thermal_opt(obs_sp_smooth) %>% group_by(age, species) %>% summarise(T_opt =model_x) %>%
-  pivot_wider(id_cols = "species",names_from = "age",values_from = "T_opt") %>% mutate(diff=LGM-PI)
-
-trait_info <- read_csv("~/Science/lgm_foram_census/fg/foram_sp_db.csv") %>%
-  mutate(sp = map_vec(Name, species_abbrev)) %>% select(sp, Symbiosis, Spinose)
-
-sp_analaysis <- merge(sp_analaysis,trait_info, by.x="species",by.y="sp")
-aov(diff ~ Symbiosis * Spinose, data=sp_analaysis) %>% summary()
+# sp_analaysis <- thermal_opt(obs_sp_smooth) %>% group_by(age, species) %>% summarise(T_opt =model_x) %>%
+#   pivot_wider(id_cols = "species",names_from = "age",values_from = "T_opt") %>% mutate(diff=LGM-PI)
+# sp_analaysis %>% write_csv("data/model_drived/Topt_sp_lgm.csv")
+# trait_info <- read_csv("~/Science/lgm_foram_census/fg/foram_sp_db.csv") %>%
+#   mutate(sp = map_vec(Name, species_abbrev)) %>% select(sp, Symbiosis, Spinose)
+# 
+# sp_analaysis <- merge(sp_analaysis,trait_info, by.x="species",by.y="sp")
+# aov(diff ~ Symbiosis * Spinose, data=sp_analaysis) %>% summary()
