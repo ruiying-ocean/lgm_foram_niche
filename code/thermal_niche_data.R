@@ -153,10 +153,6 @@ subset_columns <- c("SST", "species", "Abundance", "age")
 obs_sp_raw <- rbind(pi_sp[subset_columns], lgm_sp[subset_columns])
 obs_sp_raw <- obs_sp_raw %>% filter(species %in% sp_list)
 
-rm(lgm_sp, pi_sp)
-rm(lgm_fg_a, pi_fg_a, model_lgm, model_modern)
-rm(lgm_fg_r, pi_fg_r)
-
 ## Model output
 genie_fg_raw <- load_models("data/model_drived/") %>%
     select(!sn) %>%

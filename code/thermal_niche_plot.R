@@ -15,28 +15,26 @@ c_cold <- "#0C4876"
 c_warm <- "#98bad5"
 
 ###### Fig 1
-## raw data
+## plot raw data (dots)
 fig1a <- ggplot()+ geom_point(data=obs_fg_a_raw, aes(x=sst, y=abundance, color=age), size=1.5, alpha=0.1)
-## smoothed data
+## smoothed data (line)
 fig1a <- fig1a + geom_line(data=obs_fg_a_smooth,aes(x=model_x, y=model_y, color=age),linewidth=1)
-## facet by species
+## subplots by species
 fig1a <- fig1a + facet_wrap(~species,scales = "free_y",nrow=1)
-## plot vertical line
+fig1a <- fig1a + theme(legend.position = 'none', legend.background=element_blank())
+## plot vertical line for optimal temperature
 fig1a <- fig1a + geom_vline(data = thermal_opt(obs_fg_a_smooth), aes(xintercept = model_x, color = age), linetype = "dashed", linewidth=0.5)
-## add annotation for the thermal optimum
-#fig1a <- fig1a + geom_text(data= thermal_opt(obs_fg_a_smooth), aes(x=Inf,y=Inf,label=round(model_x), color=age, vjust=5, hjust=3))
 
 ## change color and labels
-fig1a <- fig1a +  scale_color_manual(values=c(c_cold,c_warm), labels=c("LGM","Holocene")) + labs(x="", y="Abundance (#)")
+fig1a <- fig1a +  scale_color_manual(values=c(c_cold,c_warm), labels=c("LGM","PI")) + labs(x="Sea surface temperature (°C)", y="Abundance (#)")
 ## miscelaneous theme settings
-fig1a <- fig1a + theme(strip.text = element_text(), legend.position = "none")
-#fig1a <- fig1a + annotate(geom = 'text', label = 'Observation', x = Inf, y = Inf, vjust = 1.5, hjust=1.1, fontface ="italic", size=4)
+
 fig1a<-fig1a + geom_label_repel(data = thermal_opt(obs_fg_a_smooth),
                                 aes(x = model_x, y=model_y, fill = age, label=round(model_x)),
                                 color="white", size=4, 
                                 nudge_y = 30, label.r = 0.05, label.size=0.1)+
   scale_fill_manual(values=c(c_cold,c_warm))
-
+fig1a
 ## do the same for GENIE model output
 ## subset the LGM and PI data
 fig1b <- ggplot() + geom_point(data=genie_fg_raw %>% filter(age=="lgm" | age=="pi"), aes(x=sst, y =abundance_michaels, color=age), size=1, alpha=0.2)
@@ -65,7 +63,7 @@ fig1b <- fig1b+ggtitle("ForamEcoGENIE Model")+xlim(-2,32)+theme(plot.tag = eleme
 fig1a<-fig1a+theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.8))  
 fig1b<-fig1b+theme(panel.border = element_rect(colour = "black", fill=NA, linewidth=0.8))  
 fig1 <- fig1b/fig1a+ plot_annotation(tag_levels = 'a') 
-fig1 %>% ggsave(., file="output/fig1.jpg", dpi=400, width=10, height = 6)
+fig1 %>% ggsave(., file="output/fig1.pdf", dpi=400, width=10, height = 6)
 
 ###### Species-level thermal niche shift
 figs3 <- ggplot()+ 
