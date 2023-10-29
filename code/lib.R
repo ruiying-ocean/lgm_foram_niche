@@ -3,8 +3,6 @@
 
 library(tidyverse, warn.conflicts = FALSE)
 library(quantregGrowth)
-## library(qgam)
-## library(MASS)
 
 
 ## abbreviate species genus names (e.g. Globigerinoides ruber to G. ruber)
@@ -79,31 +77,6 @@ smooth_qrg <- function(data, x, y, quant_level = seq(0.9, 0.99, 0.01)) {
   return(chart)
 }
 
-## build quantile non-parametric additive models
-## this involves GAM in mgcv::gam() that involves more complex parameters [NOT USED]
-## smooth_qgam <- function(data, x, y, quant_level){
-##     ## retrieve the name and convert to character string
-##     y <- deparse(substitute(y))
-##     x <- deparse(substitute(x))
-
-##     ## remove NA values
-##     data <- data %>% drop_na(all_of(c(x,y)))
-
-##     ## build model
-##     ## the formula is like y ~ s(x, bs='bs')
-##     ## and it inherits from GAM in mgcv::gam()
-##     formula <- as.formula(paste(y, "~ s(", x, ", bs='bs', k=20", ")", sep = ""))
-
-##     fit <- qgam(formula, qu = quant_level, data = data)
-
-##     chart <- predict(fit, se = TRUE) %>% as_tibble() %>%
-##         rename(model_y = fit, model_y_se = se.fit) %>%
-##         mutate(model_x = data %>% pull(x))
-
-##     return(chart)
-## }
-
-
 ## this is a nested loop function to smooth data by species and age
 loop_smooth <- function(data, i, j, ...) {
   data_list <- list()
@@ -169,8 +142,6 @@ convert_to_abundance <- function(data) {
   return(data)
 }
 
-
-
 ## theme from https://rpubs.com/Koundy/71792
 theme_publication <- function(base_size = 14, base_family = "helvetica") {
   library(grid)
@@ -210,7 +181,7 @@ plot_tpc <- function(raw_data, smooth_data, x, y) {
 
   ## smoothed data (line)
   fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age), linewidth = 1.2) +
-    geom_ribbon(data = smooth_data, aes(x = model_x, ymin = model_y_mean - model_y_sd, ymax = model_y_mean + model_y_sd, fill = age), alpha = 0.2)
+    geom_ribbon(data = smooth_data, aes(x = model_x, ymin = model_y_mean - model_y_sd, ymax = model_y_mean + model_y_sd, fill = age), alpha = 0.3)
 
   ## subplots by species
   fig <- fig + facet_wrap(~species, scales = "free_y")
