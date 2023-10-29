@@ -29,10 +29,11 @@ obs_sp_raw <- rbind(pi_sp[subset_columns], lgm_sp[subset_columns])
 ## exclude species with too low abundance
 lgm_sp_list <- lgm_sp %>%
   pull(species) %>%
-  unique() ## 43 spcies
+    unique() ## 43 spcies
 pi_sp_list <- pi_sp %>%
   pull(species) %>%
-  unique() ## 41 species
+    unique() ## 41 species
+
 sp_list <- intersect(lgm_sp_list, pi_sp_list) ## 37 species
 ## exclude species with too low abundance
 sp_list <- sp_list[!sp_list %in% c(

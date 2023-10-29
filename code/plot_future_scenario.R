@@ -4,8 +4,8 @@ library(ncdf4)
 
 ##  ----------- observational CO2/TEMP data -------------------
 ## historical temperature and CO2 data source: https://ourworldindata.org/co2-and-other-greenhouse-gas-emissions
-hist_temp <- read_csv("data/model_drived/observed_global_temperature_anamoly.csv")
-hist_co2 <- read_csv("data/model_drived/observed_co2.csv")
+hist_temp <- read_csv("model/model_drived/observed_global_temperature_anamoly.csv")
+hist_co2 <- read_csv("model/model_drived/observed_co2.csv")
 names(hist_temp)[2] <- "Global_Air_Temp_Anomaly"
 
 ## convert data baseline from 1961_1990 to 1850-1900
@@ -49,6 +49,7 @@ cmip_co2  <- function(dir, origin_day="0000-01-01"){
    
    return(data.frame(date=ymd, carbon_dioxide_concentration = global_co2))
 }
+
 ssp_co2_hist <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_CMIP_UoM-CMIP-1-2-0_gr1-GMNHSH_0000-2014.nc")
 ssp_co2_ssp126 <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-IMAGE-ssp126-1-2-1_gr1-GMNHSH_2015-2500.nc", "1850-01-01 00:00:00")
 ssp_co2_ssp245 <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-MESSAGE-GLOBIOM-ssp245-1-2-1_gr1-GMNHSH_2015-2500.nc",  "1850-01-01 00:00:00")
