@@ -128,7 +128,7 @@ cmip_ts_avg <- cmip_ts_avg %>% mutate(anomaly = Mean - pre_industrial_avg)
 ## some ideas from https://rstudio-pubs-static.s3.amazonaws.com/284329_c7e660636fec4a42a09eed968dc47f32.html
 theme_set(
   theme(
-    text = element_text(family = "Roboto", size = 13),
+    text = element_text(family = "helvetica", size = 13),
     panel.grid.major.x = element_blank(),
     panel.grid.major.y = element_line(linetype = "dashed", color = "gray50", linewidth = 0.5),
     panel.grid.minor = element_blank(),
