@@ -1,0 +1,28 @@
+"TY  - DATA
+AU  - Moat, Ben
+AU  - Frajka-Williams, Eleanor
+AU  - Smeed, David
+AU  - Rayner, Darren
+AU  - Johns, William
+AU  - Baringer, Molly
+AU  - Volkov, Denis
+AU  - Collins, Julie
+TI  - Atlantic meridional overturning circulation observed by the RAPID-MOCHA-WBTS (RAPID-Meridional Overturning Circulation and Heatflux Array-Western Boundary Time Series) array at 26N from 2004 to 2020 (v2020.2).
+PY  - 2022
+DA  - 2022/09/23/14:03
+AB  - The RAPID-MOCHA-WBTS (RAPID-Meridional Overturning Circulation and Heatflux Array-Western Boundary Time Series) programme has produced a continuous time series of the Atlantic Meridional Overturning Circulation (AMOC) at 26N that started in April 2004. This release of the time series covers the period from April 2004 to December 2020. The 26N AMOC time series is derived from measurements of temperature, salinity, pressure and water velocity from an array of moored instruments that extend from the east coast of the Bahamas to the continental shelf off Africa east of the Canary Islands. The AMOC calculation also uses estimates of the transport in the Florida Strait derived from sub-sea cable measurements calibrated by regular hydrographic cruises. The component of the AMOC associated with the wind driven Ekman layer is derived from ERA5 reanalysis. This release of the data includes a document with a brief description of the calculation of the AMOC time series and references to more detailed description in published papers. The 26N AMOC time series and the data from the moored array are curated by the British Oceanographic Data Centre (BODC). The RAPID-MOCHA-WBTS programme is a joint effort between NERC in the UK (Principle Investigator Ben Moat since 2021, Eleanor Frajka-Williams since 2020 to 2021, David Smeed 2012 to 2020, and Stuart Cunningham from 2004 to 2012), NOAA (PIs Molly Baringer and Denis Volkov) and NSF (PI Prof. Bill Johns, Uni. Miami) in the USA
+KW  - Atlantic Ocean
+KW  - North Atlantic Ocean
+KW  - Northeast Atlantic Ocean (40W)
+KW  - Northwest Atlantic Ocean (40W)
+KW  - Straits of Florida
+KW  - Date and time
+KW  - Lagrangian currents and transport rates in the water column
+KW  - Salinity of the water column
+KW  - Temperature of the water column
+KW  - Transport in the water column
+KW  - Vertical spatial coordinates
+DO  - doi:10.5285/e91b10af-6f0a-7fa7-e053-6c86abc05a09
+PB  - NERC EDS British Oceanographic Data Centre NOC
+LA  - en
+ER  - "
