@@ -39,35 +39,6 @@ model_pco2_temp <- model_pco2_temp %>%
   mutate(delta_T = Temperature - genie_mean_1850_1900) %>%
   ungroup()
 
-## ---------- CMIP6 CO2 data -------------------
-## cmip_co2 <- function(dir, origin_day = "0000-01-01") {
-##   nc <- nc_open(dir)
-##   # Read specific variables, dimensions, or attributes from the NetCDF file
-##   co2 <- ncvar_get(nc, "mole_fraction_of_carbon_dioxide_in_air")
-
-##   ## extract the global value
-##   global_co2 <- co2[1, ]
-
-##   # time since 0-1-1
-##   time <- ncvar_get(nc, "time")
-
-##   # Convert time to real date
-##   time_origin <- as.POSIXct(origin_day, tz = "UTC")
-##   ymd <- time_origin + as.difftime(time, unit = "days")
-
-##   nc_close(nc)
-
-##   return(data.frame(date = ymd, carbon_dioxide_concentration = global_co2))
-## }
-
-## ssp_co2_hist <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_CMIP_UoM-CMIP-1-2-0_gr1-GMNHSH_0000-2014.nc")
-## ssp_co2_ssp126 <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-IMAGE-ssp126-1-2-1_gr1-GMNHSH_2015-2500.nc", "1850-01-01 00:00:00")
-## ssp_co2_ssp245 <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-MESSAGE-GLOBIOM-ssp245-1-2-1_gr1-GMNHSH_2015-2500.nc", "1850-01-01 00:00:00")
-## ssp_co2_ssp370 <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-AIM-ssp370-1-2-1_gr1-GMNHSH_2015-2500.nc", "1850-01-01 00:00:00")
-## ssp_co2_ssp585 <- cmip_co2("~/Science/cmip_ts/mole-fraction-of-carbon-dioxide-in-air_input4MIPs_GHGConcentrations_ScenarioMIP_UoM-REMIND-MAGPIE-ssp585-1-2-1_gr1-GMNHSH_2015-2500.nc", "1850-01-01 00:00:00")
-
-## save to R data for reproducbility
-## save(ssp_co2_hist, ssp_co2_ssp126, ssp_co2_ssp245, ssp_co2_ssp370, ssp_co2_ssp585, file = "data/ssp_co2.RData")
 
 load("data/ssp_co2.RData")
 
@@ -80,16 +51,6 @@ ssp_co2_ssp585 <- ssp_co2_ssp585 %>% mutate(label = "ssp585")
 ssp_co2_data <- rbind(ssp_co2_hist, ssp_co2_ssp126, ssp_co2_ssp245, ssp_co2_ssp370, ssp_co2_ssp585)
 ssp_co2_data <- ssp_co2_data %>% filter(as.POSIXlt(date)$year + 1900 <= 2100, date >= as.Date("1850-01-01"))
 ssp_co2_data <- ssp_co2_data %>% as_tibble()
-## ---------- CMIP6 TEMP data -------------------
-
-## ts_hist <- read_csv("~/Science/cmip_ts/ts_historical.csv")
-## ts_ssp126 <- read_csv("~/Science/cmip_ts/ts_ssp126.csv")
-## ts_ssp245 <- read_csv("~/Science/cmip_ts/ts_ssp245.csv")
-## ts_ssp370 <- read_csv("~/Science/cmip_ts/ts_ssp370.csv")
-## ts_ssp585 <- read_csv("~/Science/cmip_ts/ts_ssp585.csv")
-
-## save as Rdata for reproducibility
-## save(ts_hist, ts_ssp126, ts_ssp245, ts_ssp370, ts_ssp585, file = "data/ssp_temp.RData")
 
 load("data/ssp_temp.RData")
 
