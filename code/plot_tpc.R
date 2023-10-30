@@ -11,49 +11,35 @@ source("code/lib.R")
 ## read presaved Rdata
 load("data/obs_smooth.Rdata")
 load("data/obs_raw.Rdata")
+load("data/genie_fg_smooth.Rdata")
+load("data/genie_fg_raw.Rdata")
 
 # Set the global theme for text properties
-###### Fig 1
-fig1a <- plot_tpc(raw_data = obs_fg_a_raw, smooth_data = obs_fg_a_smooth, x = "sst", y = "abundance")
+##### Fig 1a (model)
+fig1a <- plot_tpc(raw_data = genie_fg_raw %>% filter(age == "lgm" | age == "pi"), smooth_data = genie_fg_smooth %>% filter(age == "lgm" | age == "pi"), x = "sst", y = "abundance_michaels")
+fig1a <- fig1a+
+    labs(
+        x = "Sea surface temperature (°C)",
+        y = expression("Abundance (" * "#/m"^3 * ")")
+    )
 
-## change color and labels
-fig1a <- fig1a + labs(x = "Sea surface temperature (°C)", y = "Abundance (#)")
 
-fig1a + theme_publication()
-## do the same for GENIE model output
-## subset the LGM and PI data
-fig1b <- ggplot() +
-  geom_point(data = genie_fg_raw %>% filter(age == "lgm" | age == "pi"), aes(x = sst, y = abundance_michaels, color = age), size = 1, alpha = 0.2)
-fig1b <- fig1b + geom_line(data = genie_fg_smooth %>% filter(age == "lgm" | age == "pi"), aes(x = model_x, y = model_y, color = age), linewidth = 1)
-fig1b <- fig1b + facet_wrap(~species, scale = "free_y", nrow = 1)
+###### Fig 1b (data)
+fig1b <- plot_tpc(raw_data = obs_fg_a_raw, smooth_data = obs_fg_a_smooth, x = "sst", y = "abundance")
+fig1b <- fig1b + labs(x = "Sea surface temperature (°C)", y = "Abundance (#)")
 
-fig1b <- fig1b + scale_color_manual(values = c(c_cold, c_warm), labels = c("LGM", "Pre-industrial")) +
-  labs(
-    x = "Sea surface temperature (°C)",
-    y = expression("Abundance (" * "#/m"^3 * ")")
-  )
-
-fig1b <- fig1b + theme(legend.position = "none")
-fig1b <- fig1b + geom_vline(data = thermal_opt(genie_fg_smooth %>% filter(age == "lgm" | age == "pi")), aes(xintercept = model_x, color = age), linetype = "dashed", linewidth = 0.5)
-fig1b <- fig1b + scale_y_continuous(limits = ~ c(min(.x), ceiling(max(.x))) * 1.5)
-fig1b <- fig1b + geom_label_repel(
-  data = thermal_opt(genie_fg_smooth %>% filter(age == "lgm" | age == "pi")),
-  aes(x = model_x, y = model_y, fill = age, label = round(model_x)),
-  color = "white",
-  size = 4,
-  nudge_y = 30, label.r = 0.05, label.size = 0.1
-) +
-  scale_fill_manual(values = c(c_cold, c_warm))
-# fig1b <- fig1b + annotate(geom = 'text', label = 'Model', x = Inf, y = Inf,
-#                          vjust = 1.5, hjust=1.1,fontface ="italic", size=4)
-
-fig1a <- fig1a + ggtitle("Fossil Observation") + xlim(-2, 32) + theme(plot.tag = element_text(face = "bold"))
-fig1b <- fig1b + ggtitle("ForamEcoGENIE Model") + xlim(-2, 32) + theme(plot.tag = element_text(face = "bold"))
+fig1a <- fig1a + ggtitle("(a) ForamEcoGENIE Model") + xlim(-2, 32) + theme(plot.tag = element_text(face = "bold"))
+fig1b <- fig1b + ggtitle("(b) Fossil Observation") + xlim(-2, 32) + theme(plot.tag = element_text(face = "bold"))
 
 fig1a <- fig1a + theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.8))
 fig1b <- fig1b + theme(panel.border = element_rect(colour = "black", fill = NA, linewidth = 0.8))
-fig1 <- fig1b / fig1a + plot_annotation(tag_levels = "a")
-fig1 %>% ggsave(., file = "output/fig1.pdf", dpi = 400, width = 10, height = 6)
+
+fig1a <- fig1a +  theme_publication(base_size = 15) + theme(legend.position = "none")
+fig1b <- fig1b +  theme_publication(base_size = 15) + theme(legend.position = "none")
+
+fig1 <- fig1a / fig1b
+
+fig1 %>% ggsave(., file = "output/fig1.png", dpi = 300, width = 10, height = 6)
 
 
 figs3 <- plot_tpc(obs_sp_raw, obs_sp_smooth, x = "SST", y = "Abundance")

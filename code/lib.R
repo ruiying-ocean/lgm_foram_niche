@@ -53,7 +53,6 @@ smooth_qrg <- function(data, x, y, quant_level = seq(0.9, 0.99, 0.01)) {
   fit_y <- model$fitted.values
   fit_x <- data %>% pull(x)
 
-
   ## combine the fitted values and the original data
   chart <- cbind(fit_x, fit_y) %>% as_tibble()
 
@@ -127,7 +126,7 @@ thermal_opt <- function(data, long_format = TRUE) {
 convert_to_abundance <- function(data) {
   ## carbon quota source
   qc <- data.frame(
-    species = c("bn_c", "bs_c", "sn_c", "ss_c"),
+    species = c("bn", "bs", "sn", "ss"),
     # volume in um3
     volume = c(1.95e+06, 2.81e+06, 3.59e+06, 3.59e+06)
   )
@@ -141,16 +140,13 @@ convert_to_abundance <- function(data) {
   return(data)
 }
 
-## theme from https://rpubs.com/Koundy/71792
+## modified from https://rpubs.com/Koundy/71792
 theme_publication <- function(base_size = 14, base_family = "helvetica") {
   library(grid)
   library(ggthemes)
   (theme_foundation(base_size = base_size, base_family = base_family)
   + theme(
-      plot.title = element_text(
-        face = "bold",
-        size = rel(1.2), hjust = 0.5
-      ),
+      plot.title = element_text(face = "bold"),
       text = element_text(),
       panel.background = element_rect(colour = NA),
       plot.background = element_rect(colour = NA),
@@ -167,7 +163,7 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
       legend.key.size = unit(0.2, "cm"),
       legend.margin = unit(0, "cm"),
       legend.title = element_text(face = "italic"),
-      plot.margin = unit(c(10, 5, 5, 5), "mm"),
+      #plot.margin = unit(c(10, 5, 5, 5), "mm"),
       strip.background = element_rect(colour = "#f0f0f0", fill = "#f0f0f0"),
       strip.text = element_text(face = "bold")
     ))

@@ -1,29 +1,29 @@
 ## This script contains ForamEcoGENIE output
 ## Contact: rui.ying@bristol.ac.uk
 
+source('code/lib.R')
 
 ## Model output
-genie_fg_raw <- load_models("data/model_drived/")
+genie_fg_raw <- load_models("model/model_drived/")
 ## only get columns in the pattern 'xx_c'
 
 ## carbon biomass
 ## species here is actually ecogroup
-genie_fg_c <- genie_fg_raw %>%
-  select(-contains("p"), -contains("fe")) %>%
-  pivot_longer(cols=bn_c:ss_c, names_to = "species", values_to="biomass") %>%
+genie_fg_raw <- genie_fg_raw %>% select(-c("sn")) %>% 
+  pivot_longer(cols=bn:ss, names_to = "species", values_to="biomass") %>%
   convert_to_abundance() %>%
   mutate(species=recode(species,
                           "bn"="Symbiont-barren Non-Spinose",
                           "bs"="Symbiont-barren Spinose",
                           "ss"="Symbiont-obligate Spinose"))
 
-## convert c(0.9, 0.95) to c("model_y_0.9", "model_y_0.95")
+quantlvl <- seq(0.9, 0.99, 0.01)
 
+genie_fg_smooth <- loop_smooth(genie_fg_raw, i = species, j = age, x=sst, y=abundance_michaels, quant_level=quantlvl)
 
-
-genie_fg_smooth <- loop_smooth(genie_fg_c, i = species, j = age, x=sst, y=abundance_michaels, quant_level=quantlvl)
-genie_fg_smooth_chl <- loop_smooth(genie_fg_c, i = species, j = age, x=chl_total, y=abundance_michaels, quant_level=quantlvl)
-genie_fg_smooth_light <- loop_smooth(genie_fg_c, i = species, j = age, x=light, y=abundance_michaels, quant_level=quantlvl)
+## save in Rdata
+save(genie_fg_smooth, file = "data/genie_fg_smooth.Rdata")
+save(genie_fg_raw, file = "data/genie_fg_raw.Rdata")
 
 ### -----------------------
 ### basic statistics
