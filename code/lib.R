@@ -4,7 +4,6 @@
 library(tidyverse, warn.conflicts = FALSE)
 library(quantregGrowth)
 
-
 ## abbreviate species genus names (e.g. Globigerinoides ruber to G. ruber)
 species_abbrev <- function(full_name, sep_string = ". ") {
   name_parts <- str_split(full_name, " ")[[1]]
@@ -174,14 +173,16 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
     ))
 }
 
-plot_tpc <- function(raw_data, smooth_data, x, y) {
+plot_tpc <- function(raw_data, smooth_data, x, y, se = TRUE) {
   ## plot raw data (dots)
   fig <- ggplot() +
     geom_point(data = raw_data, aes(x = !!sym(x), y = !!sym(y), color = age, shape = age), size = 0.3, alpha = 0.4)
 
   ## smoothed data (line)
-  fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age), linewidth = 1.2) +
-    geom_ribbon(data = smooth_data, aes(x = model_x, ymin = model_y_mean - model_y_sd, ymax = model_y_mean + model_y_sd, fill = age), alpha = 0.3)
+  fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age), linewidth = 1.2)
+  if (se) {
+    fig <- fig + geom_ribbon(data = smooth_data, aes(x = model_x, ymin = model_y_mean - model_y_sd, ymax = model_y_mean + model_y_sd, fill = age), alpha = 0.3)
+  }
 
   ## subplots by species
   fig <- fig + facet_wrap(~species, scales = "free_y")
