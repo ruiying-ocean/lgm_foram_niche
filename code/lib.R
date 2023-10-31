@@ -163,44 +163,123 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
       legend.key.size = unit(0.2, "cm"),
       legend.margin = unit(0, "cm"),
       legend.title = element_text(face = "italic"),
-      #plot.margin = unit(c(10, 5, 5, 5), "mm"),
+      # plot.margin = unit(c(10, 5, 5, 5), "mm"),
       strip.background = element_rect(colour = "#f0f0f0", fill = "#f0f0f0"),
       strip.text = element_text(face = "bold")
     ))
 }
 
-plot_tpc <- function(raw_data, smooth_data, x, y, se = TRUE) {
+plot_tpc <- function(raw_data, smooth_data, x, y, se = TRUE, vline = TRUE, normalise_y = TRUE, colors, labels) {
+  if (normalise_y) {
+    ## Normalize y values to a range of 0 to 1 for raw data (group by species and age)
+    ## use raw data as the reference
+    scaling_factor <- smooth_data %>%
+      group_by(species) %>%
+      mutate(scaling_factor = 1 / max(model_y_mean + model_y_sd, na.rm = TRUE)) %>%
+      select(species, age, scaling_factor) %>%
+      distinct() %>%
+      ungroup()
+
+    raw_data <- raw_data %>%
+      left_join(scaling_factor, by = c("species", "age")) %>%
+      mutate(!!sym(y) := !!sym(y) * scaling_factor) %>%
+      select(-scaling_factor)
+
+    smooth_data <- smooth_data %>%
+      group_by(species, age) %>%
+      left_join(scaling_factor, by = c("species", "age")) %>%
+      mutate(model_y_mean = model_y_mean * scaling_factor) %>%
+      mutate(model_y_sd = model_y_sd * scaling_factor) %>%
+      select(-scaling_factor)
+  }
+
   ## plot raw data (dots)
+
   fig <- ggplot() +
-    geom_point(data = raw_data, aes(x = !!sym(x), y = !!sym(y), color = age, shape = age), size = 0.3, alpha = 0.4)
+    geom_point(data = raw_data, aes(x = !!sym(x), y = !!sym(y), color = age, shape = age), size = .3, alpha = 0.2)
 
   ## smoothed data (line)
   fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age), linewidth = 1.2)
+
+
+  ## subplots by species
+  if (normalise_y) {
+    fig <- fig + facet_wrap(~species)
+  } else {
+    fig <- fig + facet_wrap(~species, scales = "free_y")
+  }
+
   if (se) {
     fig <- fig + geom_ribbon(data = smooth_data, aes(x = model_x, ymin = model_y_mean - model_y_sd, ymax = model_y_mean + model_y_sd, fill = age), alpha = 0.3)
   }
 
-  ## subplots by species
-  fig <- fig + facet_wrap(~species, scales = "free_y")
-
   ## plot vertical line for optimal temperature
-  fig <- fig + geom_vline(data = thermal_opt(smooth_data), aes(xintercept = model_x, color = age), linetype = "dashed", linewidth = 0.5)
+  if (vline) {
+    fig <- fig + geom_vline(
+      data = thermal_opt(smooth_data), aes(xintercept = model_x, color = age),
+      linetype = "dashed", linewidth = 0.5
+    )
+
+    fig <- fig + geom_label_repel(
+      data = thermal_opt(smooth_data),
+      aes(x = model_x, y = model_y_mean, fill = age, label = round(model_x)),
+      color = "white", size = 4,
+      nudge_y = 30, label.r = 0.05, label.size = 0.1
+    )
+  }
 
   ## add labels
-  c_cold <- "#0C4876"
-  c_warm <- "#92b0cb"
-
-  fig <- fig + scale_color_manual(values = c(c_cold, c_warm), labels = c("LGM", "PI")) +
-    scale_fill_manual(values = c(c_cold, c_warm))
-
-  fig <- fig + geom_label_repel(
-    data = thermal_opt(smooth_data),
-    aes(x = model_x, y = model_y_mean, fill = age, label = round(model_x)),
-    color = "white", size = 4,
-    nudge_y = 30, label.r = 0.05, label.size = 0.1
-  )
-
-  fig <- fig + theme(legend.position = "none", legend.background = element_blank()) + theme_publication()
+  ## if labels are not provided, skip
+  if (!missing(labels)) {
+      fig <- fig +
+    scale_color_manual(values = colors, labels = c("LGM", "PI")) +
+    scale_fill_manual(values = colors)
+    }
 
   return(fig)
+}
+
+## a function to add global labels to a patchwork object
+## source: https://github.com/thomasp85/patchwork/issues/43
+add_global_label <- function(pwobj, Xlab = NULL, Ylab = NULL, Xgap = 0.03, Ygap = 0.03, ...) {
+  ylabgrob <- patchwork::plot_spacer()
+  if (!is.null(Ylab)) {
+    ylabgrob <- ggplot() +
+      geom_text(aes(x = .5, y = .5), label = Ylab, angle = 90, ...) +
+      theme_void()
+  }
+  if (!is.null(Xlab)) {
+    xlabgrob <- ggplot() +
+      geom_text(aes(x = .5, y = .5), label = Xlab, ...) +
+      theme_void()
+  }
+  if (!is.null(Ylab) & is.null(Xlab)) {
+    return((ylabgrob + patchworkGrob(pwobj)) +
+      patchwork::plot_layout(widths = 100 * c(Ygap, 1 - Ygap)))
+  }
+  if (is.null(Ylab) & !is.null(Xlab)) {
+    return((ylabgrob + pwobj) +
+      (xlabgrob) +
+      patchwork::plot_layout(
+        heights = 100 * c(1 - Xgap, Xgap),
+        widths = c(0, 100),
+        design = "
+                                   AB
+                                   CC
+                                   "
+      ))
+  }
+  if (!is.null(Ylab) & !is.null(Xlab)) {
+    return((ylabgrob + pwobj) +
+      (xlabgrob) +
+      patchwork::plot_layout(
+        heights = 100 * c(1 - Xgap, Xgap),
+        widths = 100 * c(Ygap, 1 - Ygap),
+        design = "
+                                   AB
+                                   CC
+                                   "
+      ))
+  }
+  return(pwobj)
 }
