@@ -38,7 +38,7 @@ fig1b <- fig1b + theme(axis.title.y = element_blank(), axis.title.x = element_bl
 
 fig1 <- wrap_plots(fig1a, fig1b, ncol = 1) %>% add_global_label(
   Ylab = "Normalised abundance",
-  Xlab = "Sea surface temperature (°C)",
+  Xlab = "Annual mean sea surface temperature (°C)",
   fontface = "bold",
   size = 5
 )
@@ -47,12 +47,12 @@ fig1 %>% ggsave(., file = "output/fig1.png", dpi = 300, width = 10, height = 6)
 
 ## Fig. S3, species level thermal performance curves
 figs3 <- plot_tpc(obs_sp_raw, obs_sp_smooth, x = "SST", y = "Abundance", vline = FALSE, colors = color_palette[1:2], labels = c("LGM", "PI"))
-figs3 <- figs3 + labs(x = "Sea surface temperature (°C)", y = "Normalised abundance")
+figs3 <- figs3 + labs(x = "Annual mean sea surface temperature (°C)", y = "Normalised abundance")
 figs3 <- figs3 + ylim(-0.1, 1)
 figs3 <- figs3 + theme(strip.text = element_text(face = "italic"), legend.position = "none") + theme_publication(15)
 figs3 %>% ggsave(file = "output/figs3.jpg", dpi = 400, width = 12, height = 8)
 
-### Fig2b
+### Fig2b, modelled thermal performance curves in the future
 genie_fg_smooth$age <- factor(genie_fg_smooth$age, levels = c("lgm", "pi", "historical", "future1p5", "future2", "future3", "future4"))
 
 ## create an empty raw_data data.frame passing to plot_tpc
@@ -63,7 +63,7 @@ fake_df <- data.frame(abundance = 0, sst = 0, age = genie_fg_smooth$age, species
 
 fig2b <- plot_tpc(raw_data = fake_df, smooth_data = filter(genie_fg_smooth, age != "historical"), x = "sst", y = "abundance", vline = FALSE, colors = color_palette, labels = c("LGM", "PI", "2100 (+1°C)", "2100 (+2°C)", "2100 (+3°C)", "2100 (+4°C)"), se = F)
 
-fig2b <- fig2b + labs(x = "Sea surface temperature (°C)", y = "Normalised abundance")
+fig2b <- fig2b + labs(x = "Annual mean sea surface temperature (°C)", y = "Normalised abundance")
 
 fig2b <- fig2b + theme_publication() +
   theme(
