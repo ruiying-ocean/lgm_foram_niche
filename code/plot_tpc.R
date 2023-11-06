@@ -71,4 +71,4 @@ fig2b <- fig2b + theme_publication() +
   )
 
 
-ggsave("output/fig2b.jpg", width = 9, height = 2.5, dpi = 300)
+ggsave("output/fig2b.jpg", width = 9, height = 2.8, dpi = 300)
