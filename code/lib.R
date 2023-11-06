@@ -151,7 +151,7 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
       panel.background = element_rect(colour = NA),
       plot.background = element_rect(colour = NA),
       panel.border = element_rect(colour = NA),
-      axis.title = element_text(face = "bold", size = rel(1)),
+      #axis.title = element_text(face = "plain", size = rel(1)),
       axis.title.y = element_text(angle = 90, vjust = 2),
       axis.title.x = element_text(vjust = -0.2),
       axis.text = element_text(),
@@ -159,13 +159,13 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
       axis.ticks = element_line(),
       panel.grid.major = element_line(colour = "#f0f0f0"),
       panel.grid.minor = element_blank(),
-      legend.key = element_rect(colour = NA),
-      legend.key.size = unit(0.2, "cm"),
-      legend.margin = unit(0, "cm"),
-      legend.title = element_text(face = "italic"),
+      ## legend.key = element_rect(colour = NA),
+      ## legend.key.size = unit(0.2, "cm"),
+      ## legend.margin = unit(0, "cm"),
+      ## legend.title = element_text(face = "italic"),
       # plot.margin = unit(c(10, 5, 5, 5), "mm"),
       strip.background = element_rect(colour = "#f0f0f0", fill = "#f0f0f0"),
-      strip.text = element_text(face = "bold")
+      strip.text = element_text(face = "plain")
     ))
 }
 

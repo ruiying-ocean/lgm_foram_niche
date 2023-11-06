@@ -39,7 +39,7 @@ fig1b <- fig1b + theme(axis.title.y = element_blank(), axis.title.x = element_bl
 fig1 <- wrap_plots(fig1a, fig1b, ncol = 1) %>% add_global_label(
   Ylab = "Normalised abundance",
   Xlab = "Annual mean sea surface temperature (°C)",
-  fontface = "bold",
+  fontface = "plain",
   size = 5
 )
 
@@ -67,7 +67,7 @@ fig2b <- fig2b + labs(x = "Annual mean sea surface temperature (°C)", y = "Norm
 
 fig2b <- fig2b + theme_publication() +
   theme(
-    legend.position = "none"
+      legend.position = "none",
   )
 
 
