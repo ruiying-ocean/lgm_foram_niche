@@ -104,20 +104,22 @@ thermal_opt <- function(data, long_format = TRUE) {
   ## find the highest abundnace
   data <- data %>%
     group_by(species, age) %>%
-    mutate(max_y = max(model_y_mean)) %>%
-    ungroup()
-
-  ## find the corresponding temperature
-  filter_data <- data %>%
-    filter(model_y_mean == max_y) %>%
+    mutate(ymax = max(model_y_mean)) %>%
+    filter(model_y_mean >= 0.95 * ymax) %>%
     distinct()
-
+  
+  ## calculate the mean and sd of optimal temperature    
+  report_data <- data%>%
+    group_by(species, age) %>%
+    summarise(opt_x_mean = mean(model_x),
+              opt_x_sd = sd(model_x)) %>%
+    ungroup()
+  
   if (long_format) {
-    return(filter_data)
+    return(report_data)
   } else {
-    report_data <- filter_data %>%
-      pivot_wider(id_cols = species, names_from = age, values_from = model_x) %>%
-      mutate(diff = PI - LGM)
+    report_data <- report_data %>%
+      pivot_wider(id_cols = species, names_from = age, values_from = opt_x_mean)
     return(report_data)
   }
 }
@@ -169,7 +171,7 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
     ))
 }
 
-plot_tpc <- function(raw_data, smooth_data, x, y, se = TRUE, vline = TRUE, normalise_y = TRUE, colors, labels) {
+plot_tpc <- function(raw_data, smooth_data, x, y, se = TRUE, vline = TRUE, vlabel=FALSE, normalise_y = TRUE, colors, labels) {
   if (normalise_y) {
     ## Normalize y values to a range of 0 to 1 for raw data (group by species and age)
     ## use raw data as the reference
@@ -216,15 +218,16 @@ plot_tpc <- function(raw_data, smooth_data, x, y, se = TRUE, vline = TRUE, norma
   ## plot vertical line for optimal temperature
   if (vline) {
     fig <- fig + geom_vline(
-      data = thermal_opt(smooth_data), aes(xintercept = model_x, color = age),
+      data = thermal_opt(smooth_data), aes(xintercept = opt_x_mean, color = age),
       linetype = "dashed", linewidth = 0.5
     )
-
-    fig <- fig + geom_label_repel(
+  }
+  if (vlabel) {
+        fig <- fig + geom_label_repel(
       data = thermal_opt(smooth_data),
-      aes(x = model_x, y = model_y_mean, fill = age, label = round(model_x)),
+      aes(x = opt_x_mean, y = 0.9, fill = age, label = round(opt_x_mean)),
       color = "white", size = 4,
-      nudge_y = 30, label.r = 0.05, label.size = 0.1
+      label.r = 0.05, label.size = 0.1
     )
   }
 
