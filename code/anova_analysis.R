@@ -11,6 +11,9 @@ load("data/obs_smooth.Rdata")
 
 Topt_diff <- obs_sp_smooth %>% thermal_opt(long_format=F) %>% mutate(diff = PI-LGM)
 
+## export to csv
+write_csv(Topt_diff, "data/Topt_sp_lgm.csv")
+
 ## merge with species trait data table
 foram_sp_db <- read_csv("https://raw.githubusercontent.com/ruiying-ocean/lgm_foram_census/main/fg/foram_sp_db.csv")
 
