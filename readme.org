@@ -8,7 +8,9 @@ This repository contains data and codes to build and plot foraminifera's thermal
 Publication: Ying, R., Monteiro, F. M., Wilson, J. D., and Schmidt, D. N.: Marine zooplankton acclimated to geological warming but facing limits by the next century, EarthArxiv (preprint), https://doi.org/10.31223/X5D10G, 2023.
 
 * How to use
-Download model output
+1. clone the repository
+2. download cGENIE output from zenodo
+3. 
 
 * Structure
 #+begin_src bash
@@ -18,62 +20,53 @@ tree -L 2 .
 #+RESULTS:
 | .   |                       |                                           |       |
 | ├── | code                  |                                           |       |
-| │   | ├──                   | cGENIE_LGM_SST.ipynb                      |       |
-| │   | ├──                   | export_genie_array.ipynb                  |       |
-| │   | ├──                   | export_genie_timeseries.ipynb             |       |
-| │   | ├──                   | find_optimal_niche_change.ipynb           |       |
-| │   | ├──                   | lab.ipynb                                 |       |
-| │   | ├──                   | lombard_2009_model.R                      |       |
-| │   | ├──                   | niche_2d_space.ipynb                      |       |
-| │   | ├──                   | niche_example.ipynb                       |       |
-| │   | ├──                   | opt_habitat_change.ipynb                  |       |
-| │   | ├──                   | plot_biogeography_change.ipynb            |       |
-| │   | ├──                   | plot_fbiomass_ts.ipynb                    |       |
-| │   | ├──                   | plot_latitudinal_biomass.ipynb            |       |
-| │   | ├──                   | plot_model_co2.R                          |       |
-| │   | ├──                   | thermal_niche_data.R                      |       |
-| │   | └──                   | thermal_niche_plot.R                      |       |
+| │    | ├──                   | export_genie_array.ipynb                  |       |
+| │    | ├──                   | export_genie_timeseries.ipynb             |       |
+| │    | ├──                   | find_optimal_niche_change.ipynb           |       |
+| │    | ├──                   | lab.ipynb                                 |       |
+| │    | ├──                   | lib.R                                     |       |
+| │    | ├──                   | lombard_2009_model.R                      |       |
+| │    | ├──                   | model_niche.R                             |       |
+| │    | ├──                   | niche_2d_space.ipynb                      |       |
+| │    | ├──                   | niche_example.ipynb                       |       |
+| │    | ├──                   | obs_niche.R                               |       |
+| │    | ├──                   | opt_habitat_change.ipynb                  |       |
+| │    | ├──                   | plot_biogeography_change.ipynb            |       |
+| │    | ├──                   | plot_fbiomass_ts.ipynb                    |       |
+| │    | ├──                   | plot_fig4.ipynb                           |       |
+| │    | ├──                   | plot_future_scenario.R                    |       |
+| │    | ├──                   | plot_latitudinal_biomass.ipynb            |       |
+| │    | └──                   | plot_thermal_fitness.R                    |       |
 | ├── | data                  |                                           |       |
-| │   | ├──                   | PMIP_MAT.csv                              |       |
-| │   | ├──                   | model_drived                              |       |
-| │   | ├──                   | modern_env                                |       |
-| │   | ├──                   | plot_LT_HadSST_1870-1899.RDS              |       |
-| │   | └──                   | plot_niche_Jonkers.RDS                    |       |
+| │    | ├──                   | obs_raw.Rdata                             |       |
+| │    | └──                   | obs_smooth.Rdata                          |       |
 | ├── | lgm_foram_niche.Rproj |                                           |       |
 | ├── | model                 |                                           |       |
-| │   | ├──                   | muffin.CBE.GIteiiaa.BASESFeTDTL_rb.SPIN   |       |
-| │   | ├──                   | muffin.CBE.GIteiiva.BASESFeTDTL_rb.SPIN   |       |
-| │   | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.2100.1p5deg |       |
-| │   | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.2100.2deg   |       |
-| │   | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.2100.3deg   |       |
-| │   | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.2100.4deg   |       |
-| │   | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.SPIN        |       |
-| │   | └──                   | muffin.CBE.worlg4.BASESFeTDTL.historical  |       |
+| │    | ├──                   | model_drived                              |       |
+| │    | ├──                   | muffin.CBE.GIteiiaa.BASESFeTDTL_rb.SPIN   |       |
+| │    | ├──                   | muffin.CBE.GIteiiva.BASESFeTDTL_rb.SPIN   |       |
+| │    | ├──                   | muffin.CBE.GIteiiva.BASESFeTDTL_rb.diag   |       |
+| │    | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.2100.1p5deg |       |
+| │    | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.2100.2deg   |       |
+| │    | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.2100.3deg   |       |
+| │    | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.2100.4deg   |       |
+| │    | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.3xCO2       |       |
+| │    | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.SPIN        |       |
+| │    | ├──                   | muffin.CBE.worlg4.BASESFeTDTL.diag        |       |
+| │    | └──                   | muffin.CBE.worlg4.BASESFeTDTL.historical  |       |
 | ├── | output                |                                           |       |
-| │   | ├──                   | LGM_AMOC_effect.png                       |       |
-| │   | ├──                   | fig1.jpg                                  |       |
-| │   | ├──                   | fig1.pdf                                  |       |
-| │   | ├──                   | fig1.png                                  |       |
-| │   | ├──                   | fig1a.jpg                                 |       |
-| │   | ├──                   | fig1b.jpg                                 |       |
-| │   | ├──                   | fig2.afdesign                             |       |
-| │   | ├──                   | fig2.jpg                                  |       |
-| │   | ├──                   | fig2a.jpg                                 |       |
-| │   | ├──                   | fig2b.jpg                                 |       |
-| │   | ├──                   | fig2c.jpg                                 |       |
-| │   | ├──                   | figs3.jpg                                 |       |
-| │   | ├──                   | figs5.jpg                                 |       |
-| │   | ├──                   | figs7.jpg                                 |       |
-| │   | ├──                   | figs8.jpg                                 |       |
-| │   | ├──                   | functional_richness.png                   |       |
-| │   | ├──                   | future_temperature_co2.png                |       |
-| │   | ├──                   | lgm_biogeographic_change.png              |       |
-| │   | ├──                   | niche.png                                 |       |
-| │   | ├──                   | niche_space.png                           |       |
-| │   | ├──                   | opt_niche_change.png                      |       |
-| │   | ├──                   | pmip4_ocean_mean.png                      |       |
-| │   | ├──                   | schematic_of_niche.afdesign               |       |
-| │   | └──                   | zonal_dissimilarity.png                   |       |
+| │    | ├──                   | LGM_AMOC_effect.png                       |       |
+| │    | ├──                   | fig2.afdesign                             |       |
+| │    | ├──                   | fig2a.jpg                                 |       |
+| │    | ├──                   | fig2b.jpg                                 |       |
+| │    | ├──                   | fig2c.jpg                                 |       |
+| │    | ├──                   | figs3.jpg                                 |       |
+| │    | ├──                   | figs8.jpg                                 |       |
+| │    | ├──                   | future_temperature_co2.png                |       |
+| │    | ├──                   | lgm_biogeographic_change.png              |       |
+| │    | ├──                   | opt_niche_change.png                      |       |
+| │    | ├──                   | pmip4_ocean_mean.png                      |       |
+| │    | └──                   | zonal_dissimilarity.png                   |       |
 | └── | readme.org            |                                           |       |
 |     |                       |                                           |       |
-| 15  | directories,          | 44                                        | files |
+| 17  | directories,          | 33                                        | files |

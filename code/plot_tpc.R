@@ -20,7 +20,8 @@ color_palette <- c("#0C4876", "#699c79", "#420a68", "#932667", "#dd513a", "#fca5
 fig1a <- plot_tpc(raw_data = genie_fg_raw %>% filter(age == "lgm" | age == "pi"), 
                   smooth_data = genie_fg_smooth %>% filter(age == "lgm" | age == "pi"),
                   x = "sst", y = "abundance_michaels", 
-                 colors = color_palette[1:2], labels = c("LGM", "PI"))
+                  colors = color_palette[1:2], labels = c("LGM", "PI"))
+                  
 
 ###### Fig 1b (data)
 ## not plotting two exceptional points in Symbiont-barren Spinose group
@@ -45,7 +46,6 @@ fig1 <- wrap_plots(fig1a, fig1b, ncol = 1) %>% add_global_label(
   fontface = "plain",
   size = 5
   )
-fig1
 
 ggsave(file = "output/fig1.svg", fig1, dpi = 300, width = 10, height = 6)
 ## convert to pdf
