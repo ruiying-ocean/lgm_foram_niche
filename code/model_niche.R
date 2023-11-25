@@ -5,21 +5,19 @@ source('code/lib.R')
 
 ## Model output
 genie_fg_raw <- load_models("model/model_drived/")
-## only get columns in the pattern 'xx_c'
 
 ## carbon biomass
 ## species here is actually ecogroup
 genie_fg_raw <- genie_fg_raw %>% select(-c("sn")) %>% 
-  pivot_longer(cols=bn:ss, names_to = "species", values_to="biomass") %>%
-  convert_to_abundance() %>%
+  pivot_longer(cols=bn:ss, names_to = "species", values_to="abundance") %>%
   mutate(species=recode(species,
-                          "bn"="Symbiont-barren Non-Spinose",
-                          "bs"="Symbiont-barren Spinose",
-                          "ss"="Symbiont-obligate Spinose"))
+                          "bn"="symbiont-barren non-spinose",
+                          "bs"="symbiont-barren spinose",
+                          "ss"="symbiont-obligate spinose"))
 
 quantlvl <- seq(0.9, 0.99, 0.01)
 
-genie_fg_smooth <- loop_smooth(genie_fg_raw, i = species, j = age, x=sst, y=abundance_michaels, quant_level=quantlvl)
+genie_fg_smooth <- loop_smooth(genie_fg_raw, i = species, j = age, x=sst, y=abundance, quant_level=quantlvl)
 
 ## save in Rdata
 save(genie_fg_smooth, file = "data/genie_fg_smooth.Rdata")
