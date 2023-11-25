@@ -54,22 +54,22 @@ system("inkscape output/fig1.svg --export-pdf=output/fig1.pdf")
 ## remove svg file
 system("rm output/fig1.svg")
 
-## Fig. S3, species level thermal performance curves
-figs3 <- plot_tpc(obs_sp_r_raw, obs_sp_r_smooth, x = "SST", y = "Abundance", vline = FALSE,
+## Extended data figure 3: species level thermal performance curves
+ext_data_fig3 <- plot_tpc(obs_sp_r_raw, obs_sp_r_smooth, x = "SST", y = "Abundance", vline = FALSE,
                   colors = color_palette[1:2], labels = c("LGM", "PI"), normalise_y = F)
-figs3 <- figs3 + labs(x = "Annual mean sea surface temperature (°C)", y = "Normalised abundance")
-figs3 <- figs3
-figs3 <- figs3 + theme(strip.text = element_text(face = "italic"), legend.position = "none") + theme_publication(15)
-figs3 %>% ggsave(file = "output/figs3.jpg", dpi = 400, width = 12, height = 8)
+ext_data_fig3 <- ext_data_fig3 + labs(x = "Annual mean sea surface temperature (°C)", y = "Relative abundance")
+ext_data_fig3 <- ext_data_fig3
+ext_data_fig3 <- ext_data_fig3 + theme(strip.text = element_text(face = "italic"), legend.position = "none") + theme_publication(15)
+ext_data_fig3 %>% ggsave(file = "output/ext_data_fig3.jpg", dpi = 400, width = 12, height = 8)
 
-### Fig2b, modelled thermal performance curves in the future
+### Fig3b, modelled thermal performance curves in the future
 genie_fg_smooth$age <- factor(genie_fg_smooth$age, levels = c("lgm", "pi", "historical", "future1p5", "future2", "future3", "future4", '3xCO2'))
 
 ## create an empty raw_data data.frame passing to plot_tpc
 ## abundance: 0, ages as in genie_fg_smooth, species as in genie_fg_smooth
 fake_df <- data.frame(abundance = 0, sst = 0, age = genie_fg_smooth$age, species = genie_fg_smooth$species) %>% distinct()
 
-fig2b <- plot_tpc(raw_data = filter(fake_df, age != "historical" & age != "3xCO2"), 
+fig3b <- plot_tpc(raw_data = filter(fake_df, age != "historical" & age != "3xCO2"), 
                   smooth_data = filter(genie_fg_smooth, age != "historical" & age != '3xCO2'), 
                   x = "sst", 
                   y = "abundance", 
@@ -78,24 +78,23 @@ fig2b <- plot_tpc(raw_data = filter(fake_df, age != "historical" & age != "3xCO2
                   labels = c("LGM", "PI", "2100 (+1°C)", "2100 (+2°C)", "2100 (+3°C)", "2100 (+4°C)"),
                   se =F) 
 
-fig2b <- fig2b + labs(x = "Annual mean sea surface temperature (°C)", y = "Normalised abundance")
+fig3b <- fig3b + labs(x = "Annual mean sea surface temperature (°C)", y = "Relative abundance")
 
-fig2b <- fig2b + theme_publication() +
+fig3b <- fig3b + theme_publication() +
   theme(
       legend.position = "none",
   )
 
-filter(genie_fg_smooth, grepl("future", age)) %>% thermal_opt() %>% 
-  group_by(species)%>% summarise(future_mean = mean(opt_x_mean), future_sd= sd(opt_x_mean))
+sum_info <- genie_fg_smooth %>% thermal_opt(Topt_coef = 0.6,long_format = F) 
 
-ggsave("output/fig2b.jpg", width = 9, height = 2.8, dpi = 300)
+ggsave("output/fig3b.jpg", width = 9, height = 2.8, dpi = 300)
 # 
-# ## plot a PI, future4, 3xPI comparison    
-# fig_n <- plot_tpc(raw_data = filter(fake_df, age == 'pi' | age == '3xCO2'), 
-#                   smooth_data = filter(genie_fg_smooth, age == "pi" | age == "3xCO2"),
-#                   x = "sst", y = "abundance", vline = FALSE, se = TRUE)
-# 
-# fig_n <- fig_n + labs(x = "Annual mean sea surface temperature (°C)", y = "Normalised abundance")
-# fig_n <- fig_n + theme_publication() 
-# fig_n
-# ggsave("output/fig_n.jpg", width = 9, height = 2.8, dpi = 300)
+## plot a PI, future4, 3xPI comparison
+fig_n <- plot_tpc(raw_data = filter(fake_df, age == 'historical' | age == '3xCO2'),
+                  smooth_data = filter(genie_fg_smooth, age == "historical" | age == "3xCO2"),
+                  x = "sst", y = "abundance", vline = FALSE, se = TRUE)
+
+fig_n <- fig_n + labs(x = "Annual mean sea surface temperature (°C)", y = "Normalised abundance")
+fig_n <- fig_n + theme_publication()
+fig_n
+ggsave("output/fig_n.jpg", width = 9, height = 2.8, dpi = 300)

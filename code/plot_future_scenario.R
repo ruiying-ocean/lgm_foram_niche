@@ -167,4 +167,4 @@ p <- ggpubr::ggarrange(p1, p2, p3, p4,
 )
 
 ## saving figures
-ggsave("output/future_temperature_co2.png", p, width = 10, height = 7, dpi = 300)
+ggsave("output/figs3.png", p, width = 10, height = 7, dpi = 300)
