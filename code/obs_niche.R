@@ -5,7 +5,9 @@ source("code/lib.R") ## load functions
 
 ## Read raw data
 ## OBSERVATION DATA (absolute and functional group format)
-lgm_fg_r <- read_csv("https://raw.githubusercontent.com/ruiying-ocean/lgm_foram_census/main/tidy/lgm_fg_r_wsst.csv")
+# dir <- "https://raw.githubusercontent.com/ruiying-ocean/lgm_foram_census/main/tidy"
+dir <- "~/Science/lgm_foram_census/tidy"
+lgm_fg_r <- read_csv(paste(dir, "lgm_fg_r_wsst.csv", sep = "/"))
 
 lgm_fg_r <- lgm_fg_r %>%
   mutate(age = "LGM") %>%
@@ -14,18 +16,21 @@ lgm_fg_r <- lgm_fg_r %>%
 
 lgm_fg_r <- lgm_fg_r %>% pivot_longer(cols = `symbiont-barren non-spinose`:`symbiont-obligate spinose`, names_to = "species", values_to = "abundance")
 
-pi_fg_r <- read_csv("https://raw.githubusercontent.com/ruiying-ocean/lgm_foram_census/main/tidy/forcens_fg_r_wsst.csv") %>%
+pi_fg_r <- read_csv(paste(dir, "forcens_fg_r_wsst.csv", sep = "/")) %>%
   mutate(age = "PI") %>%
   select(c("Latitude", "Longitude", "age", "SST", "symbiont-barren non-spinose", "symbiont-barren spinose", "symbiont-obligate spinose"))
 
 pi_fg_r <- pi_fg_r %>% pivot_longer(cols = `symbiont-barren non-spinose`:`symbiont-obligate spinose`, names_to = "species", values_to = "abundance")
 
-lgm_sp_r <- read_csv("https://raw.githubusercontent.com/ruiying-ocean/lgm_foram_census/main/tidy/lgm_sp_r_wsst.csv") %>%
+lgm_sp_r <- read_csv(paste(dir, "lgm_sp_r_wsst.csv", sep = "/")) %>%
   mutate(age = "LGM") %>%
   dplyr::filter(Data_Source == "margo")
+
 lgm_sp_r <- lgm_sp_r %>% pivot_longer(cols = `O. universa`:`G. siphonifera`, names_to = "species", values_to = "Abundance")
 
-pi_sp_r <- read_csv("https://raw.githubusercontent.com/ruiying-ocean/lgm_foram_census/main/tidy/forcens_sp_r_wsst.csv") %>% mutate(age = "PI")
+pi_sp_r <-read_csv(paste(dir, "forcens_sp_r_wsst.csv", sep = "/")) %>%
+  mutate(age = "PI")
+
 pi_sp_r <- pi_sp_r %>% pivot_longer(cols = `D. anfracta`:`H. digitata`, names_to = "species", values_to = "Abundance")
 
 ## combine ecogroup data frames and
