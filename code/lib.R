@@ -100,26 +100,38 @@ loop_smooth <- function(data, i, j, ...) {
 
 
 ## optimal temperature, calculated from smoothed data
-thermal_opt <- function(data, long_format = TRUE) {
-  ## find the highest abundnace
+thermal_opt <- function(data, Topt_coef=0.5, long_format = TRUE) {
+    ## find the highest abundnace for each species in each age
+    ymax <- data %>%
+        group_by(species, age) %>%
+        slice(which.max(model_y_mean)) %>%
+        select(species,age, model_y_mean) %>%
+          rename(ymax = model_y_mean)
+
+    data <- left_join(data,ymax, by=c("species", "age"))
+
   data <- data %>%
-    group_by(species, age) %>%
-    mutate(ymax = max(model_y_mean)) %>%
-    filter(model_y_mean >= 0.95 * ymax) %>%
-    distinct()
+      filter(model_y_mean >= Topt_coef * ymax)
+    
   
   ## calculate the mean and sd of optimal temperature    
   report_data <- data%>%
     group_by(species, age) %>%
-    summarise(opt_x_mean = mean(model_x),
-              opt_x_sd = sd(model_x)) %>%
+    summarise(Topt_mean = mean(model_x, na.rm = TRUE),
+              Topt_sd = sd(model_x, na.rm = TRUE),
+              Topt_min= min(model_x, na.rm = TRUE),
+                Topt_max= max(model_x, na.rm = TRUE)) %>%
     ungroup()
   
   if (long_format) {
     return(report_data)
   } else {
-    report_data <- report_data %>%
-      pivot_wider(id_cols = species, names_from = age, values_from = opt_x_mean)
+    
+    report_data <- report_data %>%  pivot_wider(
+  names_from = age,
+  values_from = c("Topt_mean", "Topt_sd", "Topt_min", "Topt_max"),
+  names_glue = "{age}_{.value}"
+)
     return(report_data)
   }
 }

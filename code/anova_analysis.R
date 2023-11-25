@@ -8,11 +8,19 @@ source("code/lib.R")
 
 ## read presaved Rdata
 load("data/obs_smooth.Rdata")
+load("data/genie_fg_smooth.Rdata")
 
-Topt_diff <- obs_sp_smooth %>% thermal_opt(long_format=F) %>% mutate(diff = PI-LGM)
+Topt_sp <- obs_sp_r_smooth %>% thermal_opt(long_format=F,Topt_coef = 0.8) %>%
+  mutate(Topt_mean_diff=PI_Topt_mean-LGM_Topt_mean)
+
+Topt_fg <- obs_fg_r_smooth %>% thermal_opt(long_format=F,Topt_coef = 0.8) %>%
+  mutate(Topt_mean_diff=PI_Topt_mean-LGM_Topt_mean)
+
+modelled_Topt_fg <- genie_fg_smooth %>% filter(age=="lgm" | age=="pi") %>%
+  thermal_opt(long_format=F,Topt_coef = 0.8)
 
 ## export to csv
-write_csv(Topt_diff, "data/Topt_sp_lgm.csv")
+write_csv(Topt_sp, "data/Topt_sp_lgm.csv")
 
 ## merge with species trait data table
 foram_sp_db <- read_csv("https://raw.githubusercontent.com/ruiying-ocean/lgm_foram_census/main/fg/foram_taxonomy.csv")
@@ -21,35 +29,38 @@ trait_info <-foram_sp_db %>%
    mutate(sp = map_vec(`Species name`, species_abbrev)) %>% select(sp, Symbiosis, Spine)
 
 ## check all species are included
-common_sp <- intersect(Topt_diff$species, trait_info$sp)
-if (length(common_sp) == length(Topt_diff$species)) {
+common_sp <- intersect(Topt_sp$species, trait_info$sp)
+if (length(common_sp) == length(Topt_sp$species)) {
   print("all species included")
 }
 
-Topt_diff <- Topt_diff %>% rename(sp=species) %>% left_join(trait_info, by = "sp") %>% distinct()
+Topt_sp <- Topt_sp %>% rename(sp=species) %>% left_join(trait_info, by = "sp") %>% distinct()
 
 ## anova analysis using symbiont and spine trait
-Topt_diff <- Topt_diff %>% dplyr::filter(Symbiosis != 'undetermined',  Spine != 'underdetermined')
-
+Topt_sp <- Topt_sp %>% dplyr::filter(Symbiosis != 'undetermined',  Spine != 'underdetermined') %>%
+  dplyr::filter(Symbiosis != 'facultative',  Spine != 'underdetermined')
 
 ## merge symbiont obligate and symbiont bearing groups
-## Topt_diff <- Topt_diff %>% mutate(Symbiosis = ifelse(Symbiosis == 'symbiont-obligate', 'symbiont-bearing', Symbiosis))
-
-mod <- aov(diff ~ Spine + Symbiosis, data = Topt_diff)
+mod <- aov(Topt_mean_diff ~ Spine + Symbiosis, data = Topt_sp)
 summary(mod)
-
-## comparison between groups
-TukeyHSD(mod)
 
 ## ggpubr plot boxplot
 library(ggpubr)
 
-Topt_diff %>% mutate(ecogroup=paste(Symbiosis, Spine)) %>%
-    ggboxplot(, x='ecogroup',y='diff',fill='ecogroup',palette = "jco",add='jitter')+
+Topt_sp %>% mutate(ecogroup=paste(Symbiosis, Spine)) %>%
+  filter(ecogroup!="symbiont-facultative spinose") %>%
+  ggboxplot(x='ecogroup',y='Topt_mean_diff',fill='ecogroup',palette = "jco",add='jitter')+
   stat_compare_means(method = "anova",label = "p.signif") +
-  theme_publication()+
-  theme(legend.position = "none", axis.title.x = element_blank())+
-  ylab(expression(paste("PI - LGM optimal temperature (",degree,"C)")))
+  theme_publication(base_size = 12)+
+  theme(legend.position = "right", axis.text.x = element_blank())+
+  ylab(expression(paste("∆ species optimal temperature (°C)"))) +
+  xlab("Ecological group")
 
-## save the figure
-ggsave("output/figs2.png",width=8,height=4)
+## save the figure to svg
+ggsave(file = "output/figs5.svg", dpi = 300, width = 8, height = 5)
+## convert to pdf
+system("inkscape output/figs5.svg --export-pdf=output/figs5.pdf")
+## rsvg solution
+##system("rsvg-convert -f pdf output/fig1.svg > output/fig1.pdf")
+## remove svg file
+system("rm output/figs5.svg")
