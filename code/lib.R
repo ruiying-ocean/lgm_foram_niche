@@ -101,14 +101,14 @@ loop_smooth <- function(data, i, j, ...) {
 
 ## optimal temperature, calculated from smoothed data
 thermal_opt <- function(data, Topt_coef=0.5, long_format = TRUE) {
-    ## find the highest abundnace for each species in each age
+
     ymax <- data %>%
-        group_by(species, age) %>%
+        group_by(species) %>%
         slice(which.max(model_y_mean)) %>%
-        select(species,age, model_y_mean) %>%
+        select(species, model_y_mean) %>%
           rename(ymax = model_y_mean)
 
-    data <- left_join(data,ymax, by=c("species", "age"))
+    data <- left_join(data,ymax, by=c("species"))
 
   data <- data %>%
       filter(model_y_mean >= Topt_coef * ymax)
