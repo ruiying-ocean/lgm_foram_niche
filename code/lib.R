@@ -183,34 +183,15 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
     ))
 }
 
-plot_tpc <- function(raw_data, smooth_data, x, y, se = TRUE, vline = TRUE, vlabel=FALSE, normalise_y = TRUE, colors, labels) {
-  if (normalise_y) {
-    ## Normalize y values to a range of 0 to 1 for raw data (group by species and age)
-    ## use raw data as the reference
-    scaling_factor <- smooth_data %>%
-      group_by(species) %>%
-      mutate(scaling_factor = 1 / max(model_y_mean + model_y_sd, na.rm = TRUE)) %>%
-      select(species, age, scaling_factor) %>%
-      distinct() %>%
-      ungroup()
+plot_tpc <- function(raw_data, smooth_data, x, y, se = TRUE, vline = TRUE, vlabel=FALSE, colors, labels) {
 
-    raw_data <- raw_data %>%
-      left_join(scaling_factor, by = c("species", "age")) %>%
-      mutate(!!sym(y) := !!sym(y) * scaling_factor) %>%
-      select(-scaling_factor)
-
-    smooth_data <- smooth_data %>%
-      group_by(species, age) %>%
-      left_join(scaling_factor, by = c("species", "age")) %>%
-      mutate(model_y_mean = model_y_mean * scaling_factor) %>%
-      mutate(model_y_sd = model_y_sd * scaling_factor) %>%
-      select(-scaling_factor)
-  }
-
+  fig <- ggplot()
   ## plot raw data (dots)
-
-  fig <- ggplot() +
+  if (!is.null(raw_data)) {
+    print("raw data")
+     fig<- fig +
     geom_point(data = raw_data, aes(x = !!sym(x), y = !!sym(y), color = age, shape = age), size = .3, alpha = 0.2)
+  }  
 
   ## smoothed data (line)
   fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age), linewidth = 1.2)
