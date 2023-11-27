@@ -100,38 +100,38 @@ loop_smooth <- function(data, i, j, ...) {
 
 
 ## optimal temperature, calculated from smoothed data
-thermal_opt <- function(data, Topt_coef=0.5, long_format = TRUE) {
+thermal_opt <- function(data, Topt_coef = 0.5, long_format = TRUE) {
+  ymax <- data %>%
+    group_by(species) %>%
+    slice(which.max(model_y_mean)) %>%
+    select(species, model_y_mean) %>%
+    rename(ymax = model_y_mean)
 
-    ymax <- data %>%
-        group_by(species) %>%
-        slice(which.max(model_y_mean)) %>%
-        select(species, model_y_mean) %>%
-          rename(ymax = model_y_mean)
-
-    data <- left_join(data,ymax, by=c("species"))
+  data <- left_join(data, ymax, by = c("species"))
 
   data <- data %>%
-      filter(model_y_mean >= Topt_coef * ymax)
-    
-  
-  ## calculate the mean and sd of optimal temperature    
-  report_data <- data%>%
+    filter(model_y_mean >= Topt_coef * ymax)
+
+
+  ## calculate the mean and sd of optimal temperature
+  report_data <- data %>%
     group_by(species, age) %>%
-    summarise(Topt_mean = mean(model_x, na.rm = TRUE),
-              Topt_sd = sd(model_x, na.rm = TRUE),
-              Topt_min= min(model_x, na.rm = TRUE),
-                Topt_max= max(model_x, na.rm = TRUE)) %>%
+    summarise(
+      Topt_mean = mean(model_x, na.rm = TRUE),
+      Topt_sd = sd(model_x, na.rm = TRUE),
+      Topt_min = min(model_x, na.rm = TRUE),
+      Topt_max = max(model_x, na.rm = TRUE)
+    ) %>%
     ungroup()
-  
+
   if (long_format) {
     return(report_data)
   } else {
-    
-    report_data <- report_data %>%  pivot_wider(
-  names_from = age,
-  values_from = c("Topt_mean", "Topt_sd", "Topt_min", "Topt_max"),
-  names_glue = "{age}_{.value}"
-)
+    report_data <- report_data %>% pivot_wider(
+      names_from = age,
+      values_from = c("Topt_mean", "Topt_sd", "Topt_min", "Topt_max"),
+      names_glue = "{age}_{.value}"
+    )
     return(report_data)
   }
 }
@@ -165,7 +165,7 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
       panel.background = element_rect(colour = NA),
       plot.background = element_rect(colour = NA),
       panel.border = element_rect(colour = NA),
-      #axis.title = element_text(face = "plain", size = rel(1)),
+      # axis.title = element_text(face = "plain", size = rel(1)),
       axis.title.y = element_text(angle = 90, vjust = 2),
       axis.title.x = element_text(vjust = -0.2),
       axis.text = element_text(),
@@ -183,54 +183,46 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
     ))
 }
 
-plot_tpc <- function(raw_data, smooth_data, x, y, se = TRUE, vline = TRUE, vlabel=FALSE, colors, labels) {
-
+plot_tpc <- function(raw_data, smooth_data, x, y, errorbar = TRUE, opt_range = TRUE, colors, labels) {
   fig <- ggplot()
+
   ## plot raw data (dots)
   if (!is.null(raw_data)) {
-    print("raw data")
-     fig<- fig +
-    geom_point(data = raw_data, aes(x = !!sym(x), y = !!sym(y), color = age, shape = age), size = .3, alpha = 0.2)
-  }  
+    fig <- fig +
+      geom_point(data = raw_data, aes(x = !!sym(x), y = !!sym(y), color = age, shape = age), size = .3, alpha = 0.2)
+  }
 
   ## smoothed data (line)
   fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age), linewidth = 1.2)
 
+  ## subplot by species
+  fig <- fig + facet_wrap(~species, scales = "free_y")
 
-  ## subplots by species
-  if (normalise_y) {
-    fig <- fig + facet_wrap(~species)
-  } else {
-    fig <- fig + facet_wrap(~species, scales = "free_y")
-  }
-
-  if (se) {
+  ## plot the ensemble standard deviation
+  if (errorbar) {
     fig <- fig + geom_ribbon(data = smooth_data, aes(x = model_x, ymin = model_y_mean - model_y_sd, ymax = model_y_mean + model_y_sd, fill = age), alpha = 0.3)
   }
 
-  ## plot vertical line for optimal temperature
-  if (vline) {
-    fig <- fig + geom_vline(
-      data = thermal_opt(smooth_data), aes(xintercept = opt_x_mean, color = age),
-      linetype = "dashed", linewidth = 0.5
-    )
-  }
-  if (vlabel) {
-        fig <- fig + geom_label_repel(
-      data = thermal_opt(smooth_data),
-      aes(x = opt_x_mean, y = 0.9, fill = age, label = round(opt_x_mean)),
-      color = "white", size = 4,
-      label.r = 0.05, label.size = 0.1
-    )
+  ## plot vertical line for mean optimal temperature
+  if (opt_range) {
+    fig <- fig +
+      geom_segment(
+        data = thermal_opt(smooth_data), aes(
+          x = Topt_min, xend = Topt_max,
+          y = 0.1, yend = 0.1,
+          group = age, color = age
+        ),
+        arrow = arrow(length = unit(0.03, "npc"), ends = "both")
+      )
   }
 
   ## add labels
   ## if labels are not provided, skip
   if (!missing(labels)) {
-      fig <- fig +
-    scale_color_manual(values = colors, labels = c("LGM", "PI")) +
-    scale_fill_manual(values = colors)
-    }
+    fig <- fig +
+      scale_color_manual(values = colors, labels = c("LGM", "PI")) +
+      scale_fill_manual(values = colors)
+  }
 
   return(fig)
 }
