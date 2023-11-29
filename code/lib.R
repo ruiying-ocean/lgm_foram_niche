@@ -1,6 +1,8 @@
 ## This script contains main functions to read the thermal performance data,
 ## build quantile regression model, and calculate the thermal optimum
 
+## contact: rui.ying@bristol.ac.uk
+
 library(tidyverse, warn.conflicts = FALSE)
 library(quantregGrowth)
 
@@ -75,7 +77,7 @@ smooth_qrg <- function(data, x, y, quant_level = seq(0.9, 0.99, 0.01)) {
   return(chart)
 }
 
-## this is a nested loop function to smooth data by species and age
+## this is a nested loop function to run smooth_qrg for various species and ages
 loop_smooth <- function(data, i, j, ...) {
   data_list <- list()
   j <- deparse(substitute(j))
@@ -99,9 +101,11 @@ loop_smooth <- function(data, i, j, ...) {
 }
 
 
-## optimal temperature, calculated from smoothed data
+## report the thermal optimum min, max, mean, sd
+## it is defined as the temperature at which the biomass is 50% of the maximum (adjustable in `Topt_coef`)
+## It keep the same standard in different ages
 thermal_opt <- function(data, Topt_coef = 0.5, long_format = TRUE) {
-  ymax <- data %>%
+    ymax <- data %>%
     group_by(species) %>%
     slice(which.max(model_y_mean)) %>%
     select(species, model_y_mean) %>%
@@ -111,7 +115,6 @@ thermal_opt <- function(data, Topt_coef = 0.5, long_format = TRUE) {
 
   data <- data %>%
     filter(model_y_mean >= Topt_coef * ymax)
-
 
   ## calculate the mean and sd of optimal temperature
   report_data <- data %>%
@@ -136,31 +139,13 @@ thermal_opt <- function(data, Topt_coef = 0.5, long_format = TRUE) {
   }
 }
 
-## convert model biomass to abundance
-convert_to_abundance <- function(data) {
-  ## carbon quota source
-  qc <- data.frame(
-    species = c("bn", "bs", "sn", "ss"),
-    # volume in um3
-    volume = c(1.95e+06, 2.81e+06, 3.59e+06, 3.59e+06)
-  )
-
-  ## every individual -> ug -> mmol C
-  qc <- qc %>% mutate(carbon_quota_michaels = volume * 10 / 3.75E7 / 12 * 1E-3)
-  data <- data %>% left_join(qc, by = c("species" = "species"))
-
-  ## ind/m3
-  data <- data %>% mutate(abundance_michaels = biomass / carbon_quota_michaels)
-  return(data)
-}
-
 ## modified from https://rpubs.com/Koundy/71792
 theme_publication <- function(base_size = 14, base_family = "helvetica") {
   library(grid)
   library(ggthemes)
   (theme_foundation(base_size = base_size, base_family = base_family)
   + theme(
-      plot.title = element_text(face = "bold"),
+      plot.title = element_text(face = "plain"),
       text = element_text(),
       panel.background = element_rect(colour = NA),
       plot.background = element_rect(colour = NA),
@@ -183,13 +168,13 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
     ))
 }
 
-plot_tpc <- function(raw_data, smooth_data, x, y, errorbar = TRUE, opt_range = TRUE, colors, labels) {
+plot_tpc <- function(raw_data, smooth_data, x, y, errorbar = TRUE, label_topt = TRUE, label_pos, colors, labels) {
   fig <- ggplot()
 
   ## plot raw data (dots)
   if (!is.null(raw_data)) {
     fig <- fig +
-      geom_point(data = raw_data, aes(x = !!sym(x), y = !!sym(y), color = age, shape = age), size = .3, alpha = 0.2)
+      geom_point(data = raw_data, aes(x = !!sym(x), y = !!sym(y), color = age, shape = age), size = .2, alpha = 0.15)
   }
 
   ## smoothed data (line)
@@ -200,19 +185,42 @@ plot_tpc <- function(raw_data, smooth_data, x, y, errorbar = TRUE, opt_range = T
 
   ## plot the ensemble standard deviation
   if (errorbar) {
-    fig <- fig + geom_ribbon(data = smooth_data, aes(x = model_x, ymin = model_y_mean - model_y_sd, ymax = model_y_mean + model_y_sd, fill = age), alpha = 0.3)
+    fig <- fig + geom_ribbon(data = smooth_data, aes(x = model_x, ymin = model_y_mean - model_y_sd, ymax = model_y_mean + model_y_sd, fill = age), alpha = 0.2)
   }
 
   ## plot vertical line for mean optimal temperature
-  if (opt_range) {
+  if (label_topt) {
+    opt_data <- thermal_opt(smooth_data)
+    print(opt_data)
+
+    if (missing(label_pos)) {
+      ## default for the LGM and PI main figure
+      opt_data <- opt_data %>% mutate(y.pos = case_when(
+        toupper(age) == "LGM" ~ -0.1,
+        toupper(age) == "PI" ~ -0.05,
+      ))
+    } else {
+        opt_data <- opt_data %>% arrange(species, age)
+        opt_data <- opt_data %>% mutate(y.pos = label_pos)
+    }
+
     fig <- fig +
+      geom_point(
+        data = opt_data,
+        aes(
+          x = Topt_mean,
+          y = y.pos,
+          color = age,
+        )
+      ) +
       geom_segment(
-        data = thermal_opt(smooth_data), aes(
+        data = opt_data,
+        aes(
           x = Topt_min, xend = Topt_max,
-          y = 0.1, yend = 0.1,
+          y = y.pos, yend = y.pos,
           group = age, color = age
         ),
-        arrow = arrow(length = unit(0.03, "npc"), ends = "both")
+        linewidth = 0.5,
       )
   }
 
