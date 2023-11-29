@@ -41,22 +41,18 @@ obs_fg_r_raw <- obs_fg_r_raw %>% dplyr::filter(species != "symbiont-facultative 
 ## only get relevant columns from the observation data (species-level)
 subset_columns <- c("SST", "species", "Abundance", "age")
 obs_sp_r_raw <- rbind(pi_sp_r[subset_columns], lgm_sp_r[subset_columns])
-## exclude species with too low abundance
+
 lgm_sp_list <- lgm_sp_r %>%
-  pull(species) %>%
-  unique()
+    dplyr::filter(Abundance > 0) %>%
+    pull(species) %>%
+    unique()
+
 pi_sp_list <- pi_sp_r %>%
-  pull(species) %>%
-  unique()
+    dplyr::filter(Abundance > 0) %>%
+    pull(species) %>%
+    unique()
 
 sp_list <- intersect(lgm_sp_list, pi_sp_list)
-
-## exclude species with low abundance
-sp_list <- sp_list[!sp_list %in% c(
-  "G. uvula", "H. digitata", "B. pumilio",
-  "T. iota","H. pelagica", "D. anfracta",
-  "G. adamsi", "G. eastropacia"
-)]
 
 obs_sp_r_raw <- obs_sp_r_raw %>% dplyr::filter(species %in% sp_list) %>% drop_na(Abundance)
 
