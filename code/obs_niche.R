@@ -64,3 +64,12 @@ obs_sp_r_smooth <- loop_smooth(obs_sp_r_raw, i = species, j = age, x = SST, y = 
 ## export the data in Rdata
 save(obs_fg_r_smooth, obs_sp_r_smooth, file = "data/obs_smooth.Rdata")
 save(obs_fg_r_raw, obs_sp_r_raw, file = "data/obs_raw.Rdata")
+
+## export the statistic data in csv
+obs_sp_r_smooth %>% thermal_opt(long_format=F) %>%
+    mutate(Topt_mean_diff=PI_Topt_mean-LGM_Topt_mean) %>%
+    write_csv("data/Topt_sp_lgm.csv")
+
+obs_fg_r_smooth %>% thermal_opt(long_format=F) %>%
+    mutate(Topt_mean_diff=PI_Topt_mean-LGM_Topt_mean) %>%
+    write_csv("data/Topt_fg_lgm.csv")
