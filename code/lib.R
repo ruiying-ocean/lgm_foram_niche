@@ -5,6 +5,7 @@
 
 library(tidyverse, warn.conflicts = FALSE)
 library(quantregGrowth)
+library(ggpubr)
 
 ## abbreviate species genus names (e.g. Globigerinoides ruber to G. ruber)
 species_abbrev <- function(full_name, sep_string = ". ") {
@@ -278,4 +279,48 @@ add_global_label <- function(pwobj, Xlab = NULL, Ylab = NULL, Xgap = 0.03, Ygap 
       ))
   }
   return(pwobj)
+}
+
+
+## helper function to return lm coefficients as a list
+lm_coeffs <- function(x, y) {
+  coeffs = as.list(coefficients(lm(y~x)))
+  names(coeffs) = c('i', "s")
+  return(coeffs)
+}
+
+boot_lm <- function(data, x, y){
+  library(data.table)
+  set.seed(999999)
+  ## generate bootstrap samples of slope ('s') and intercept ('i')
+  nboot <- 1000
+  mtboot <- lapply(seq_len(nboot), function(i) {
+    ## resample
+    sampled_data <- data[sample(nrow(data), replace = TRUE), ]
+    ## get coefficients of linear model
+    lm_coeffs(sampled_data[[x]], sampled_data[[y]])
+  })
+  mtboot <- rbindlist(mtboot)
+  return(mtboot)
+}
+
+plot_lm <- function(data, x, y, label_pos,...){
+  # Use R2 instead of R
+  p <- ggscatter(data, x = x, y = y, add = "reg.line",...) +
+    stat_cor(aes(label = paste(..rr.label.., ..p.label.., sep = "~`,`~")), 
+             label.x = label_pos[1], label.y = label_pos[2], size = 4)
+
+  ## plot the bootstrapped regression results
+  mtboot <- boot_lm(data, x, y)
+  p <- p + geom_abline(aes(intercept=i, slope=s), data = mtboot, linewidth=0.1, color='grey', alpha=0.1)
+  p <- p + geom_smooth(method = "lm", se = FALSE, color = "black", linewidth = 1.2)
+
+  ## annotate slope
+  ## 95% CI
+  ci_lower <- quantile(mtboot$s, 0.025) %>% round(1)
+  ci_upper <- quantile(mtboot$s, 0.975) %>% round(1)
+  median_value  <- quantile(mtboot$s, 0.5) %>% round(1)
+  p <- p + annotate("text", x = label_pos[3], y = label_pos[4],  size = 4,
+                    label = paste0("slope: ",median_value, " (", ci_lower,", ", ci_upper,")"))
+  return(p)
 }
