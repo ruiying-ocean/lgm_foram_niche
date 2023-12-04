@@ -78,5 +78,5 @@ library(patchwork)
 combined_plot <- stacked_barplot/ difference_plot + plot_annotation(tag_levels = 'a') &
   theme(plot.tag = element_text(face = 'bold'))
 
-ggsave("output/compositional_change.png", combined_plot,
+ggsave("output/supp_fig7.png", combined_plot,
        width = 10, height = 8, dpi = 300)
