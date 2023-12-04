@@ -35,16 +35,16 @@ mod <- aov(Topt_mean_diff ~ Spine + Symbiosis, data = obs_sp_Topt)
 summary(mod)
 
 ## use species optimal temperature to explain the species optimal temperature change
-ext_data_fig6b <- plot_lm(data=obs_sp_Topt, x="PI_Topt_mean", y="Topt_mean_diff", c(9,6,13,5))
-ext_data_fig6b <- ext_data_fig6b + theme_publication(base_size = 14) + 
+ext_data_fig4b <- plot_lm(data=obs_sp_Topt, x="PI_Topt_mean", y="Topt_mean_diff", c(9,6,13,5))
+ext_data_fig4b <- ext_data_fig4b + theme_publication(base_size = 14) +
   labs(x = "PI habitat mean temperature (°C)", y = "Δ Thermal optimum (°C)")
 
 ## use species habitat temperature change to explain the species optimal temperature change
-ext_data_fig6a <- plot_lm(data=obs_sp_Topt, x="delta_habtemp", y="Topt_mean_diff", c(3,-4, 4.2,-5))
-ext_data_fig6a <- ext_data_fig6a + theme_publication(base_size = 14) + 
+ext_data_fig4a <- plot_lm(data=obs_sp_Topt, x="delta_habtemp", y="Topt_mean_diff", c(3,-4, 4.2,-5))
+ext_data_fig4a <- ext_data_fig4a + theme_publication(base_size = 14) +
   labs(x = "Habitat temperature change (°C)", y = "Δ Thermal optimum (°C)")
 
 library(patchwork)
-ext_data_fig6 <- ext_data_fig6a + ext_data_fig6b + plot_layout(ncol = 2) +
+ext_data_fig4 <- ext_data_fig6a + ext_data_fig6b + plot_layout(ncol = 2) +
   plot_annotation(tag_levels = "a")
-ext_data_fig6 %>% ggsave(file = "output/ext_data_fig6.png", dpi = 300, width = 10, height = 4)
+ext_data_fig4 %>% ggsave(file = "output/ext_data_fig4.png", dpi = 300, width = 10, height = 4)
