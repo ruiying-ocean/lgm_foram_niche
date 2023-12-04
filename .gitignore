@@ -2,3 +2,4 @@ model
 .idea
 *.DS_Store
 .Rproj.user
+.Rhistory
