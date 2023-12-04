@@ -19,19 +19,21 @@ color_palette <- c("#0C4876", "#699c79", "#420a68", "#932667", "#dd513a", "#fca5
 ##### Fig 1a (model)
 fig1a <- plot_tpc(raw_data = genie_fg_raw %>% filter(age == "lgm" | age == "pi"), 
                   smooth_data = genie_fg_smooth %>% filter(age == "lgm" | age == "pi"),
-                  x = "sst", y = "abundance",  normalise_y = F, vline = F,
+                  x = "sst", y = "abundance", label_topt = T,
                   colors = color_palette[1:2], labels = c("LGM", "PI"))
 
 ###### Fig 1b (data)
 ## not plotting two exceptional points in Symbiont-barren Spinose group
 fig1b <- plot_tpc(
   raw_data = obs_fg_r_raw,
-  smooth_data = obs_fg_r_smooth, x = "sst", y = "abundance", vline = F, normalise_y = F,
+  smooth_data = obs_fg_r_smooth, x = "sst", y = "abundance",label_topt = T,
   colors = color_palette[1:2], labels = c("LGM", "PI")
 )
 
-fig1a <- fig1a + ggtitle("(a) ForamEcoGENIE Model") + xlim(-2, 32)  + theme(plot.tag = element_text(face = "bold"))
-fig1b <- fig1b + ggtitle("(b) Fossil Observation") + xlim(-2, 32) + theme(plot.tag = element_text(face = "bold"))
+fig1a <- fig1a + ggtitle("(a) cGENIE Model") + xlim(-2, 32) + ylim(-0.1,1.1)+
+  theme(plot.tag = element_text(face = "bold"))
+fig1b <- fig1b + ggtitle("(b) Fossil Observation") + xlim(-2, 32) + ylim(-0.1,1.1)+
+  theme(plot.tag = element_text(face = "bold"))
 
 fig1a <- fig1a + theme_publication(base_size = 15) + theme(legend.position = "none")
 fig1b <- fig1b + theme_publication(base_size = 15) + theme(legend.position = "none")
@@ -45,38 +47,36 @@ fig1 <- wrap_plots(fig1a, fig1b, ncol = 1) %>% add_global_label(
   fontface = "plain",
   size = 5
   )
+fig1
 
 ggsave(file = "output/fig1.svg", fig1, dpi = 300, width = 10, height = 6)
-## convert to pdf
-system("inkscape output/fig1.svg --export-pdf=output/fig1.pdf")
-## rsvg solution
-##system("rsvg-convert -f pdf output/fig1.svg > output/fig1.pdf")
-## remove svg file
+system("inkscape output/fig1.svg --export-filename=output/fig1.pdf --export-dpi=300")
 system("rm output/fig1.svg")
 
-## Extended data figure 3: species level thermal performance curves
-ext_data_fig3 <- plot_tpc(obs_sp_r_raw, obs_sp_r_smooth, x = "SST", y = "Abundance", vline = FALSE,
-                  colors = color_palette[1:2], labels = c("LGM", "PI"), normalise_y = F)
-ext_data_fig3 <- ext_data_fig3 + labs(x = "Annual mean sea surface temperature (°C)", y = "Relative abundance")
-ext_data_fig3 <- ext_data_fig3
-ext_data_fig3 <- ext_data_fig3 + theme(strip.text = element_text(face = "italic"), legend.position = "none") + theme_publication(15)
-ext_data_fig3 %>% ggsave(file = "output/ext_data_fig3.jpg", dpi = 400, width = 12, height = 8)
+## Extended data figure 2: species level thermal performance curves
+## exclude species with little abundance
+exclude_sp <- c("D. anfracta", "G. uvula", "T. iota", "G. adamsi")
+obs_sp_r_smooth <- obs_sp_r_smooth %>% filter(!species %in% exclude_sp)
+
+ext_data_fig2 <- plot_tpc(NULL, obs_sp_r_smooth, x = "SST", y = "Abundance", label_topt = F,
+                  colors = color_palette[1:2], labels = c("LGM", "PI"))
+ext_data_fig2 <- ext_data_fig2 + labs(x = "Annual mean sea surface temperature (°C)", y = "Relative abundance")
+ext_data_fig2 <- ext_data_fig2 + theme_publication(15) +
+  theme(strip.text = element_text(face = "italic"), legend.position = "bottom") 
+ext_data_fig2 %>% ggsave(file = "output/ext_data_fig2.jpg", dpi = 400, width = 12, height = 8)
 
 ### Fig3b, modelled thermal performance curves in the future
 genie_fg_smooth$age <- factor(genie_fg_smooth$age, levels = c("lgm", "pi", "historical", "future1p5", "future2", "future3", "future4", '3xCO2'))
 
-## create an empty raw_data data.frame passing to plot_tpc
-## abundance: 0, ages as in genie_fg_smooth, species as in genie_fg_smooth
-fake_df <- data.frame(abundance = 0, sst = 0, age = genie_fg_smooth$age, species = genie_fg_smooth$species) %>% distinct()
-
-fig3b <- plot_tpc(raw_data = filter(fake_df, age != "historical" & age != "3xCO2"), 
+fig3b <- plot_tpc(raw_data = NULL,
                   smooth_data = filter(genie_fg_smooth, age != "historical" & age != '3xCO2'), 
                   x = "sst", 
                   y = "abundance", 
-                  vline = F, 
+                  label_topt = T,
+                  label_pos = c(seq(0.125,0.0,-0.025), seq(0.05,0.0,-0.01),c(seq(0.125,0.0,-0.025))),
                   colors = color_palette, 
                   labels = c("LGM", "PI", "2100 (+1°C)", "2100 (+2°C)", "2100 (+3°C)", "2100 (+4°C)"),
-                  se =F) 
+                  errorbar =F)
 
 fig3b <- fig3b + labs(x = "Annual mean sea surface temperature (°C)", y = "Relative abundance")
 
@@ -85,16 +85,16 @@ fig3b <- fig3b + theme_publication() +
       legend.position = "none",
   )
 
-sum_info <- genie_fg_smooth %>% thermal_opt(Topt_coef = 0.6,long_format = F) 
+ggsave("output/fig3b.jpg",fig3b, width = 9, height = 2.8, dpi = 300)
+ 
+# plot a PI, future4, 3xPI comparison
+fig_s10 <- plot_tpc(raw_data = NULL,
+                  smooth_data = filter(genie_fg_smooth, age == "future4" | age == "2.5xCO2"),
+                  x = "sst", y = "abundance", errorbar = TRUE)
 
-ggsave("output/fig3b.jpg", width = 9, height = 2.8, dpi = 300)
-# 
-## plot a PI, future4, 3xPI comparison
-fig_n <- plot_tpc(raw_data = filter(fake_df, age == 'historical' | age == '3xCO2'),
-                  smooth_data = filter(genie_fg_smooth, age == "historical" | age == "3xCO2"),
-                  x = "sst", y = "abundance", vline = FALSE, se = TRUE)
+fig_s10 <- fig_s10 + labs(x = "Annual mean sea surface temperature (°C)", y = "Relative abundance")
+fig_s10 <- fig_s10 + theme_publication() + ylim(0,1.1) +
+  scale_fill_manual(labels = c("spin up", "transient"), values = c("pink", "steelblue"))+
+  scale_color_manual(labels = c("spin up", "transient"), values = c("pink", "steelblue"))
 
-fig_n <- fig_n + labs(x = "Annual mean sea surface temperature (°C)", y = "Normalised abundance")
-fig_n <- fig_n + theme_publication()
-fig_n
-ggsave("output/fig_n.jpg", width = 9, height = 2.8, dpi = 300)
+ggsave("output/sup_fig10.jpg",fig_s10, width = 9, height = 2.8, dpi = 300)
