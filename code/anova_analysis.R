@@ -5,22 +5,16 @@
 
 ## load visualisation packages
 source("code/lib.R")
+library(ggpubr)
 
 ## read presaved Rdata
 load("data/obs_smooth.Rdata")
 load("data/genie_fg_smooth.Rdata")
 
-Topt_sp <- obs_sp_r_smooth %>% thermal_opt(long_format=F,Topt_coef = 0.8) %>%
-  mutate(Topt_mean_diff=PI_Topt_mean-LGM_Topt_mean)
-
-Topt_fg <- obs_fg_r_smooth %>% thermal_opt(long_format=F,Topt_coef = 0.8) %>%
-  mutate(Topt_mean_diff=PI_Topt_mean-LGM_Topt_mean)
-
-modelled_Topt_fg <- genie_fg_smooth %>% filter(age=="lgm" | age=="pi") %>%
-  thermal_opt(long_format=F,Topt_coef = 0.8)
-
-## export to csv
-write_csv(Topt_sp, "data/Topt_sp_lgm.csv")
+##  as the Fig. 2
+## delta habitat temperature
+delta_habtemp <- read_csv("data/obs_sp_hab.csv")
+obs_sp_Topt <- obs_sp_Topt %>% left_join(delta_habtemp)
 
 ## merge with species trait data table
 foram_sp_db <- read_csv("https://raw.githubusercontent.com/ruiying-ocean/lgm_foram_census/main/fg/foram_taxonomy.csv")
@@ -29,38 +23,28 @@ trait_info <-foram_sp_db %>%
    mutate(sp = map_vec(`Species name`, species_abbrev)) %>% select(sp, Symbiosis, Spine)
 
 ## check all species are included
-common_sp <- intersect(Topt_sp$species, trait_info$sp)
-if (length(common_sp) == length(Topt_sp$species)) {
+common_sp <- intersect(obs_sp_Topt$species, trait_info$sp)
+if (length(common_sp) == length(obs_sp_Topt$species)) {
   print("all species included")
 }
 
-Topt_sp <- Topt_sp %>% rename(sp=species) %>% left_join(trait_info, by = "sp") %>% distinct()
+obs_sp_Topt <- obs_sp_Topt %>% rename(sp=species) %>% left_join(trait_info, by = "sp") %>% distinct()
 
-## anova analysis using symbiont and spine trait
-Topt_sp <- Topt_sp %>% dplyr::filter(Symbiosis != 'undetermined',  Spine != 'underdetermined') %>%
-  dplyr::filter(Symbiosis != 'facultative',  Spine != 'underdetermined')
-
-## merge symbiont obligate and symbiont bearing groups
-mod <- aov(Topt_mean_diff ~ Spine + Symbiosis, data = Topt_sp)
+## use species trait to explain the species optimal temperature change
+mod <- aov(Topt_mean_diff ~ Spine + Symbiosis, data = obs_sp_Topt)
 summary(mod)
 
-## ggpubr plot boxplot
-library(ggpubr)
+## use species optimal temperature to explain the species optimal temperature change
+ext_data_fig6b <- plot_lm(data=obs_sp_Topt, x="PI_Topt_mean", y="Topt_mean_diff", c(9,6,13,5))
+ext_data_fig6b <- ext_data_fig6b + theme_publication(base_size = 14) + 
+  labs(x = "PI habitat mean temperature (°C)", y = "Δ Thermal optimum (°C)")
 
-Topt_sp %>% mutate(ecogroup=paste(Symbiosis, Spine)) %>%
-  filter(ecogroup!="symbiont-facultative spinose") %>%
-  ggboxplot(x='ecogroup',y='Topt_mean_diff',fill='ecogroup',palette = "jco",add='jitter')+
-  stat_compare_means(method = "anova",label = "p.signif") +
-  theme_publication(base_size = 12)+
-  theme(legend.position = "right", axis.text.x = element_blank())+
-  ylab(expression(paste("∆ species optimal temperature (°C)"))) +
-  xlab("Ecological group")
+## use species habitat temperature change to explain the species optimal temperature change
+ext_data_fig6a <- plot_lm(data=obs_sp_Topt, x="delta_habtemp", y="Topt_mean_diff", c(3,-4, 4.2,-5))
+ext_data_fig6a <- ext_data_fig6a + theme_publication(base_size = 14) + 
+  labs(x = "Habitat temperature change (°C)", y = "Δ Thermal optimum (°C)")
 
-## save the figure to svg
-ggsave(file = "output/figs5.svg", dpi = 300, width = 8, height = 5)
-## convert to pdf
-system("inkscape output/figs5.svg --export-pdf=output/figs5.pdf")
-## rsvg solution
-##system("rsvg-convert -f pdf output/fig1.svg > output/fig1.pdf")
-## remove svg file
-system("rm output/figs5.svg")
+library(patchwork)
+ext_data_fig6 <- ext_data_fig6a + ext_data_fig6b + plot_layout(ncol = 2) +
+  plot_annotation(tag_levels = "a")
+ext_data_fig6 %>% ggsave(file = "output/ext_data_fig6.png", dpi = 300, width = 10, height = 4)
