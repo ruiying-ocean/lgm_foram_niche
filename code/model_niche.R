@@ -19,26 +19,9 @@ quantlvl <- seq(0.9, 0.99, 0.01)
 
 genie_fg_smooth <- loop_smooth(genie_fg_raw, i = species, j = age, x=sst, y=abundance, quant_level=quantlvl)
 
+genie_fg_Topt <- genie_fg_smooth %>%  thermal_opt(long_format=F) %>% mutate_if(is.numeric, round, 1)
+
 ## save in Rdata
-save(genie_fg_smooth, file = "data/genie_fg_smooth.Rdata")
+save(genie_fg_smooth, genie_fg_Topt, file = "data/genie_fg_smooth.Rdata")
 save(genie_fg_raw, file = "data/genie_fg_raw.Rdata")
 
-### -----------------------
-### basic statistics
-
-### report total data points
-## obs_fg_a_raw %>% group_by(species, age) %>% summarise(n())
-## obs_sp_raw %>% group_by(species, age) %>% summarise(n())
-
-
-## ------------------------
-## trait does not explain the difference
-
-# sp_analaysis <- thermal_opt(obs_sp_smooth) %>% group_by(age, species) %>% summarise(T_opt =model_x) %>%
-#   pivot_wider(id_cols = "species",names_from = "age",values_from = "T_opt") %>% mutate(diff=LGM-PI)
-# sp_analaysis %>% write_csv("data/model_drived/Topt_sp_lgm.csv")
-# trait_info <- read.csv("~/Science/lgm_foram_census/fg/foram_sp_db.csv") %>%
-#   mutate(sp = map_vec(Name, species_abbrev)) %>% select(sp, Symbiosis, Spinose)
-# 
-# sp_analaysis <- merge(sp_analaysis,trait_info, by.x="species",by.y="sp")
-# aov(diff ~ Symbiosis * Spinose, data=sp_analaysis) %>% summary()

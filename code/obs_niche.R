@@ -61,15 +61,18 @@ quantlvl <- seq(0.9, 0.99, 0.01)
 obs_fg_r_smooth <- loop_smooth(obs_fg_r_raw, i = species, j = age, x = sst, y = abundance, quant_level = quantlvl)
 obs_sp_r_smooth <- loop_smooth(obs_sp_r_raw, i = species, j = age, x = SST, y = Abundance, quant_level = quantlvl)
 
+## the statistic data (mean, sd, min, max)
+obs_sp_Topt <- obs_sp_r_smooth %>% thermal_opt(long_format=F) %>%
+    mutate(Topt_mean_diff=PI_Topt_mean-LGM_Topt_mean)
+
+obs_fg_Topt <- obs_fg_r_smooth %>% thermal_opt(long_format=F) %>%
+    mutate(Topt_mean_diff=PI_Topt_mean-LGM_Topt_mean)
+
 ## export the data in Rdata
-save(obs_fg_r_smooth, obs_sp_r_smooth, file = "data/obs_smooth.Rdata")
+save(obs_fg_r_smooth, obs_sp_r_smooth, obs_sp_Topt, obs_fg_Topt, file = "data/obs_smooth.Rdata")
 save(obs_fg_r_raw, obs_sp_r_raw, file = "data/obs_raw.Rdata")
 
-## export the statistic data in csv
-obs_sp_r_smooth %>% thermal_opt(long_format=F) %>%
-    mutate(Topt_mean_diff=PI_Topt_mean-LGM_Topt_mean) %>%
-    write_csv("data/Topt_sp_lgm.csv")
+## also export the obs_sp_Topt data in csv
+write_csv(obs_sp_Topt, "data/obs_sp_Topt.csv")
+write_csv(obs_fg_Topt, "data/obs_fg_Topt.csv")
 
-obs_fg_r_smooth %>% thermal_opt(long_format=F) %>%
-    mutate(Topt_mean_diff=PI_Topt_mean-LGM_Topt_mean) %>%
-    write_csv("data/Topt_fg_lgm.csv")
