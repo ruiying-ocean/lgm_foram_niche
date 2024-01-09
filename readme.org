@@ -18,7 +18,8 @@ git clone https://github.com/ruiying-ocean/lgm_foram_niche.git
 
 * Dependencies   
 1. The latest R and Python
-2. Related packages (e.g., `tidyverse`, `numpy`, `matplotlib`, `pandas`, `cgeniepy`)
+2. R libraries (`tidyverse`, `quantregGrowth`, `ggpubr`, `patchwork`)
+3. Python packages (`numpy`, `matplotlib`, `pandas`, `xarray`, `cgeniepy`v0.7.5)
 
 * Script functions
 + export genie_array/export_genie_timeseries.ipynb: convert GENIE output to csv data
