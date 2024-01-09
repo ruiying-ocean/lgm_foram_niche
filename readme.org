@@ -1,7 +1,7 @@
 #+title: Building thermal performance curves of planktic foraminifera from past to future
 #+author: Rui Ying
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[[https://opensource.org/licenses/MIT][![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)]]
 
 * About
 
