@@ -13,7 +13,8 @@ Publication: Ying, R., Monteiro, F. M., Wilson, J. D., and Schmidt, D. N.: Marin
 3. Run the related scripts
 
 #+begin_src bash
-git clone https://github.com/ruiying-ocean/lgm_foram_niche.git  
+git clone https://github.com/ruiying-ocean/lgm_foram_niche.git
+mkdir -p model ## put downloaded model output
 #+end_src
 
 * Dependencies   
