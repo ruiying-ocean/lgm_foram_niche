@@ -1,6 +1,8 @@
 #+title: Building thermal performance curves of planktic foraminifera from past to future
 #+author: Rui Ying
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 * About
 
 This repository contains data and codes to build and plot foraminifera's thermal performance curve in the Last Glacial Maximum (LGM) and pre-industrial age.
