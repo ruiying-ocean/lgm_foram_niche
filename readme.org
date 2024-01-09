@@ -9,15 +9,12 @@ Publication: Ying, R., Monteiro, F. M., Wilson, J. D., and Schmidt, D. N.: Marin
 
 * How to use
 1. Clone the repository using git
-2. Download cGENIE output from Zenodo and put them under "model" directory
-3. Run the related scripts
+2. Run the related scripts
+3. (optional) reanalyse raw cGENIE output by downloading them from Zenodo and put under "model" directory
 
 #+begin_src bash
   ## clone the repository
   git clone https://github.com/ruiying-ocean/lgm_foram_niche.git
-
-  ## create a model folder for the cGENIE output
-  mkdir -p model
 #+end_src
 
 * Dependencies   
@@ -30,3 +27,8 @@ Publication: Ying, R., Monteiro, F. M., Wilson, J. D., and Schmidt, D. N.: Marin
 + model_niche/obs_niche.R: build thermal performance curves (TPC) and assess optimal temperature
 + anova_analysis: ANOVA of species-level optimal temperature change
 + Others (plot_xxx): as per name
+
+* Pre-stored data
++ genie_fg_raw/genie_fg_smooth/obs_raw/obs_smooth.Rdata: as in the Fig. 1
++ obs_sp_Topt.csv: The estimated optimal temperature min/max/mean/sd in each age (LGM/PI/historical/future1.5/future2/future3/future4)
++ ssp_co2/ssp_temp.Rdata: adapted from CMIP models
