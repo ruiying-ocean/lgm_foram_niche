@@ -19,35 +19,37 @@ color_palette <- c("#0C4876", "#699c79", "#420a68", "#932667", "#dd513a", "#fca5
 ##### Fig 1a (model)
 fig1a <- plot_tpc(raw_data = genie_fg_raw %>% filter(age == "lgm" | age == "pi"), 
                   smooth_data = genie_fg_smooth %>% filter(age == "lgm" | age == "pi"),
-                  x = "sst", y = "abundance", label_topt = T,
+                  x = "sst", y = "abundance", label_topt = T, facet_scale="fixed",
                   colors = color_palette[1:2], labels = c("LGM", "PI"))
 
 ###### Fig 1b (data)
 ## not plotting two exceptional points in Symbiont-barren Spinose group
 fig1b <- plot_tpc(
   raw_data = obs_fg_r_raw,
-  smooth_data = obs_fg_r_smooth, x = "sst", y = "abundance",label_topt = T,
+  smooth_data = obs_fg_r_smooth, x = "sst", y = "abundance",
+  label_topt = T,facet_scale="fixed",
   colors = color_palette[1:2], labels = c("LGM", "PI")
 )
 
-fig1a <- fig1a + ggtitle("(a) cGENIE Model") + xlim(-2, 32) + ylim(-0.1,1.1)+
-  theme(plot.tag = element_text(face = "bold"))
-fig1b <- fig1b + ggtitle("(b) Fossil Observation") + xlim(-2, 32) + ylim(-0.1,1.1)+
-  theme(plot.tag = element_text(face = "bold"))
+fig1a <- fig1a + xlim(-2, 32) + ylim(-0.1,1.1)+
+  theme(plot.tag = element_text(face = "bold")) +
+  labs(y="Rel. abund. [model]")
+
+fig1b <- fig1b + xlim(-2, 32) + ylim(-0.1,1.1)+
+  theme(plot.tag = element_text(face = "bold")) +
+  ylab("Rel. abund. [data]")
 
 fig1a <- fig1a + theme_publication(base_size = 15) + theme(legend.position = "none")
 fig1b <- fig1b + theme_publication(base_size = 15) + theme(legend.position = "none")
 
-fig1a <- fig1a + theme(axis.title.y = element_blank(), axis.title.x = element_blank())
-fig1b <- fig1b + theme(axis.title.y = element_blank(), axis.title.x = element_blank())
+fig1a <- fig1a + theme(axis.title.x = element_blank())
+fig1b <- fig1b + theme(axis.title.x = element_blank())
 
 fig1 <- wrap_plots(fig1a, fig1b, ncol = 1) %>% add_global_label(
-  Ylab = "Relative abundance",
   Xlab = "Annual mean sea surface temperature (°C)",
   fontface = "plain",
   size = 5
   )
-fig1
 
 ggsave(file = "output/fig1.svg", fig1, dpi = 300, width = 10, height = 6)
 system("inkscape output/fig1.svg --export-filename=output/fig1.pdf --export-dpi=300")

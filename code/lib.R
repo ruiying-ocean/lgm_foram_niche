@@ -169,7 +169,7 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
     ))
 }
 
-plot_tpc <- function(raw_data, smooth_data, x, y, errorbar = TRUE, label_topt = TRUE, label_pos, colors, labels) {
+plot_tpc <- function(raw_data, smooth_data, x, y, errorbar = TRUE, label_topt = TRUE, facet_scale="free_y",label_pos, colors, labels) {
   fig <- ggplot()
 
   ## plot raw data (dots)
@@ -182,7 +182,7 @@ plot_tpc <- function(raw_data, smooth_data, x, y, errorbar = TRUE, label_topt = 
   fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age), linewidth = 1.2)
 
   ## subplot by species
-  fig <- fig + facet_wrap(~species, scales = "free_y")
+  fig <- fig + facet_wrap(~species, scales = facet_scale)
 
   ## plot the ensemble standard deviation
   if (errorbar) {
