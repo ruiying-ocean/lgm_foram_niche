@@ -100,3 +100,30 @@ fig_s10 <- fig_s10 + theme_publication() + ylim(0,1.1) +
   scale_color_manual(labels = c("spin up", "transient"), values = c("pink", "steelblue"))
 
 ggsave("output/sup_fig10.jpg",fig_s10, width = 9, height = 2.8, dpi = 300)
+
+# plot a PI (GMD vs. Nature version) comparison with observation as reference
+model_comparison <- genie_fg_smooth %>% filter(age == "piold" | age == "pi")
+pi_obs <- obs_fg_r_smooth %>% filter(age == "PI")
+## modify source label for plotting
+pi_obs$age <- "obs"
+model_comparison <- model_comparison %>% mutate(age = ifelse(age == "piold", "Ying et al. (2023)", "This study"))
+## combine both
+all_pis <- rbind(model_comparison, pi_obs)
+
+fig_s7 <- plot_tpc(raw_data = NULL,
+                  smooth_data = all_pis,
+                  x = "sst", y = "abundance",  facet_scale="fixed", 
+                  label_topt = F, errorbar=F)
+
+fig_s7 <- fig_s7 + labs(x = "Annual mean sea surface temperature (°C)", y = "Relative abundance")
+
+fig_s7 <- fig_s7 + ylim(0,1.1) +
+  scale_fill_manual(labels = c("Observation", "This study", "Ying et al. (2023)"), values =  c("grey",'blue','red'))+
+  scale_color_manual(labels = c("Observation", "This study", "Ying et al. (2023)"), values =   c("grey",'blue','red'))
+  
+
+## remove legend title
+fig_s7 <- fig_s7 + theme_publication()+
+  theme(legend.title = element_blank())
+
+ggsave("output/sup_fig7.jpg",fig_s7, width = 9, height = 2.8, dpi = 300)
