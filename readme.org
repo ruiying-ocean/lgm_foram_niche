@@ -31,6 +31,9 @@ Publication: Ying, R., Monteiro, F. M., Wilson, J. D., and Schmidt, D. N.: Marin
 + Others (plot_xxx): as per name
 
 * Pre-stored data
+Due to the size of model simulation output (which can be found in 10.5281/zenodo.8272885 ), I put my model-derived data and related analysed data here.
+
 + genie_fg_raw/genie_fg_smooth/obs_raw/obs_smooth.Rdata: as in the Fig. 1
 + obs_sp_Topt.csv: The estimated optimal temperature min/max/mean/sd in each age (LGM/PI/historical/future1.5/future2/future3/future4)
 + ssp_co2/ssp_temp.Rdata: adapted from CMIP models
++ xx_foramecogenie.csv: the model output (the abbreviation is bn: symbiont-barren non-spinose; bs: symbiont-barren spinose; sn: symbiont-facultative non-spinose; ss: symbiont-obligate spinose)
