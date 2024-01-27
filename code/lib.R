@@ -169,7 +169,7 @@ theme_publication <- function(base_size = 14, base_family = "helvetica") {
     ))
 }
 
-plot_tpc <- function(raw_data, smooth_data, x, y, errorbar = TRUE, label_topt = TRUE, facet_scale="free_y",label_pos, colors, labels) {
+plot_tpc <- function(raw_data, smooth_data, x, y, errorbar = TRUE, label_topt = TRUE, facet_scale="free_y",label_pos, colors, labels, linetype) {
   fig <- ggplot()
 
   ## plot raw data (dots)
@@ -178,8 +178,14 @@ plot_tpc <- function(raw_data, smooth_data, x, y, errorbar = TRUE, label_topt = 
       geom_point(data = raw_data, aes(x = !!sym(x), y = !!sym(y), color = age, shape = age), size = .2, alpha = 0.15)
   }
 
-  ## smoothed data (line)
-  fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age), linewidth = 1.2)
+  ## smoothed data (line)  
+  ## if specify the linetype
+  if (!missing(linetype)) {
+        fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age, linetype = age), linewidth = 1.2)
+  } else{
+      ## by default, use solid line
+      fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age), linewidth = 1.2)
+  }
 
   ## subplot by species
   fig <- fig + facet_wrap(~species, scales = facet_scale)
