@@ -3,3 +3,4 @@ model/muffin.CBE.*/
 *.DS_Store
 .Rproj.user
 .Rhistory
+model/muffin*/*
