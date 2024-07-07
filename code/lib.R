@@ -181,10 +181,10 @@ plot_tpc <- function(raw_data, smooth_data, x, y, errorbar = TRUE, label_topt = 
   ## smoothed data (line)  
   ## if specify the linetype
   if (!missing(linetype)) {
-        fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age, linetype = age), linewidth = 1.2)
+        fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age, linetype = age), linewidth = 0.7)
   } else{
       ## by default, use solid line
-      fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age), linewidth = 1.2)
+      fig <- fig + geom_line(data = smooth_data, aes(x = model_x, y = model_y_mean, color = age), linewidth = 0.7)
   }
 
   ## subplot by species

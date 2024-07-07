@@ -50,8 +50,9 @@ fig1 <- wrap_plots(fig1a, fig1b, ncol = 1) %>% add_global_label(
   fontface = "plain",
   size = 5
   )
-
-ggsave(file = "output/fig1.svg", fig1, dpi = 300, width = 10, height = 6)
+## 18 cm => 7.08 inch
+## 13 cm => 5.11811 inch
+ggsave(file = "output/fig1.svg", fig1, dpi = 300, width = 7.08, height = 5.11811)
 system("inkscape output/fig1.svg --export-filename=output/fig1.pdf --export-dpi=300")
 system("rm output/fig1.svg")
 
@@ -63,9 +64,9 @@ obs_sp_r_smooth <- obs_sp_r_smooth %>% filter(!species %in% exclude_sp)
 ext_data_fig2 <- plot_tpc(NULL, obs_sp_r_smooth, x = "SST", y = "Abundance", label_topt = F,
                   colors = color_palette[1:2], labels = c("LGM", "PI"))
 ext_data_fig2 <- ext_data_fig2 + labs(x = "Annual mean sea surface temperature (°C)", y = "Relative abundance")
-ext_data_fig2 <- ext_data_fig2 + theme_publication(15) +
+ext_data_fig2 <- ext_data_fig2 + theme_publication(7) +
   theme(strip.text = element_text(face = "italic"), legend.position = "bottom") 
-ext_data_fig2 %>% ggsave(file = "output/ext_data_fig2.jpg", dpi = 400, width = 12, height = 8)
+ext_data_fig2 %>% ggsave(file = "output/ext_data_fig2.jpg", dpi = 400, width = 7, height = 5)
 
 ### Fig3b, modelled thermal performance curves in the future
 genie_fg_smooth$age <- factor(genie_fg_smooth$age, levels = c("lgm", "pi", "historical", "future1p5", "future2", "future3", "future4", '3xCO2'))
