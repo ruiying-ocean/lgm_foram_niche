@@ -59,14 +59,16 @@ system("rm output/fig1.svg")
 ## Extended data figure 2: species level thermal performance curves
 ## exclude species with little abundance
 exclude_sp <- c("D. anfracta", "G. uvula", "T. iota", "G. adamsi")
+## remove species with little abundance
 obs_sp_r_smooth <- obs_sp_r_smooth %>% filter(!species %in% exclude_sp)
+
 
 ext_data_fig2 <- plot_tpc(NULL, obs_sp_r_smooth, x = "SST", y = "Abundance", label_topt = F,
                   colors = color_palette[1:2], labels = c("LGM", "PI"))
 ext_data_fig2 <- ext_data_fig2 + labs(x = "Annual mean sea surface temperature (°C)", y = "Relative abundance")
-ext_data_fig2 <- ext_data_fig2 + theme_publication(7) +
+ext_data_fig2 <- ext_data_fig2 + theme_publication(10) +
   theme(strip.text = element_text(face = "italic"), legend.position = "bottom") 
-ext_data_fig2 %>% ggsave(file = "output/ext_data_fig2.jpg", dpi = 400, width = 7, height = 5)
+ext_data_fig2 %>% ggsave(file = "output/ext_data_fig2.jpg", dpi = 300, width = 7, height = 5)
 
 ### Fig3b, modelled thermal performance curves in the future
 genie_fg_smooth$age <- factor(genie_fg_smooth$age, levels = c("lgm", "pi", "historical", "future1p5", "future2", "future3", "future4", '3xCO2'))
