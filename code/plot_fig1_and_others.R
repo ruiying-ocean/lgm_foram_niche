@@ -73,24 +73,31 @@ ext_data_fig2 %>% ggsave(file = "output/ext_data_fig2.jpg", dpi = 300, width = 7
 ### Fig3b, modelled thermal performance curves in the future
 genie_fg_smooth$age <- factor(genie_fg_smooth$age, levels = c("lgm", "pi", "historical", "future1p5", "future2", "future3", "future4", '3xCO2'))
 
+fig3b_data <- filter(genie_fg_smooth, age != '3xCO2' & age != "pi" & age != "lgm")
+fig3b_color_palette <- c("#D3D3D3", color_palette[3:6])
+
 fig3b <- plot_tpc(raw_data = NULL,
-                  smooth_data = filter(genie_fg_smooth, age != "historical" & age != '3xCO2'), 
+                  smooth_data = fig3b_data, 
                   x = "sst", 
                   y = "abundance", 
                   label_topt = T,
-                  label_pos = c(seq(0.125,0.0,-0.025), seq(0.05,0.0,-0.01),c(seq(0.125,0.0,-0.025))),
-                  colors = color_palette, 
-                  labels = c("LGM", "PI", "2100 (+1°C)", "2100 (+2°C)", "2100 (+3°C)", "2100 (+4°C)"),
+                  label_pos = c(seq(0.1,0.0,-0.025), seq(0.04,0.0,-0.01),c(seq(0.1,0.0,-0.025))),
+                  colors = fig3b_color_palette, 
+                  labels = c("historical", "2100 (+1°C)", "2100 (+2°C)", "2100 (+3°C)", "2100 (+4°C)"),
                   errorbar =F)
-
 fig3b <- fig3b + labs(x = "Annual mean sea surface temperature (°C)", y = "Relative abundance")
 
-fig3b <- fig3b + theme_publication() +
+fig3b <- fig3b +
+   theme_publication(7)+
   theme(
-      legend.position = "none",
+    legend.position = "none",
   )
 
-ggsave("output/fig3b.jpg",fig3b, width = 9, height = 2.8, dpi = 300)
+ggsave("output/fig3b.svg",fig3b, width = 7, height = 2, dpi = 300)
+system("inkscape output/fig3b.svg --export-filename=output/fig3b.pdf --export-dpi=300")
+system("rm output/fig3b.svg")
+
+
  
 # plot a PI, future4, 3xPI comparison
 fig_s10 <- plot_tpc(raw_data = NULL,
