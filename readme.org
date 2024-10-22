@@ -7,7 +7,8 @@
 
 This repository contains data and codes to build and plot foraminifera's thermal performance curve in the Last Glacial Maximum (LGM) and pre-industrial age.
 
-Publication: Ying, R., Monteiro, F. M., Wilson, J. D., and Schmidt, D. N.: Marine zooplankton acclimated to geological warming but facing limits by the next century, EarthArxiv (preprint), https://doi.org/10.31223/X5D10G, 2023.
+Publication:
+Ying, R., Monteiro, F. M., Wilson, J. D., Ödalen M., and Schmidt, D. N.: Past foraminiferal acclimatization capacity is limited during future warming, Nature, https://doi.org/10.1038/s41586-024-08029-0
 
 * How to use
 1. Clone the repository using git
